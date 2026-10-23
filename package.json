@@ -1,0 +1,36 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack calculator: React + TypeScript frontend, Express + TypeScript REST backend.",
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n backend,frontend -c blue,magenta \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build --workspaces",
+    "start": "npm run start -w backend",
+    "test": "npm run test --workspaces",
+    "test:coverage": "npm run test --workspaces && node scripts/coverage-summary.mjs",
+    "lint": "npm run lint --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check:contract": "node scripts/check-contract.mjs",
+    "verify": "npm run check:contract && npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run build",
+    "docker:build": "docker build -t calculator .",
+    "docker:run": "docker run --rm -p 3000:3000 --name calculator calculator",
+    "compose:up": "docker compose up --build",
+    "compose:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.5",
+    "prettier": "^3.9.10"
+  }
+}
