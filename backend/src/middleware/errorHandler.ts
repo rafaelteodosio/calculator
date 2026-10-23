@@ -28,13 +28,11 @@ export const errorHandler: ErrorRequestHandler = (err: unknown, _req, res, next)
       error = new AppError(500, 'INTERNAL_ERROR', MESSAGES.INTERNAL_ERROR);
     }
   }
-  res
-    .status(error.status)
-    .json({
-      error: {
-        code: error.code,
-        message: error.message,
-        ...(error.details ? { details: error.details } : {}),
-      },
-    });
+  res.status(error.status).json({
+    error: {
+      code: error.code,
+      message: error.message,
+      ...(error.details ? { details: error.details } : {}),
+    },
+  });
 };
