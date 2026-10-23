@@ -1,0 +1,68 @@
+.key {
+  border: 0;
+  border-radius: 16px;
+  min-width: 0;
+  min-height: 48px;
+  aspect-ratio: 1;
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--key-text);
+  cursor: pointer;
+  transition:
+    transform 100ms,
+    filter 100ms;
+}
+.digit {
+  background: var(--key-digit);
+}
+.function {
+  background: var(--key-fn);
+}
+.operator {
+  background: var(--key-op);
+  color: #18382e;
+}
+.equals {
+  background: var(--key-eq);
+  color: white;
+}
+.key:hover:enabled {
+  filter: brightness(0.95);
+}
+.key:active:enabled {
+  transform: scale(0.96);
+}
+.key:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+.key[aria-pressed='true'] {
+  background: #18382e;
+  color: var(--key-op);
+}
+.key:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+@media (max-width: 359px) {
+  .key {
+    font-size: 1.25rem;
+    border-radius: 12px;
+  }
+}
+@media (max-height: 540px) and (orientation: landscape) {
+  .key {
+    aspect-ratio: auto;
+    height: 44px;
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .key {
+    transition: none;
+  }
+  .key:active:enabled {
+    transform: none;
+  }
+}

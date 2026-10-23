@@ -1,0 +1,17 @@
+.calculator {
+  width: min(100%, 380px);
+  min-width: 0;
+}
+.calculator[aria-busy='true'] [role='group'] {
+  opacity: 0.8;
+}
+@media (min-width: 480px) {
+  .calculator {
+    padding: 24px;
+    border-radius: 28px;
+    background: var(--surface);
+    box-shadow:
+      0 18px 60px #182c2514,
+      0 2px 8px #182c2508;
+  }
+}

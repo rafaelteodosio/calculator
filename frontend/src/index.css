@@ -1,4 +1,51 @@
+:root {
+  color-scheme: light;
+  --bg: #f1f3f5;
+  --surface: #fff;
+  --display-bg: #f6f8f7;
+  --text: #172c25;
+  --muted: #52665d;
+  --key-digit: #edf1ef;
+  --key-fn: #dce4df;
+  --key-op: #d0eadc;
+  --key-eq: #256348;
+  --key-text: #172c25;
+  --focus: #245edb;
+  --error: #ac2634;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: var(--text);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+}
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
+  background: var(--bg);
+}
+main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 16px;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
