@@ -35,7 +35,6 @@ How to run the frontend and backend
 Examples of API calls (if using REST)
 Design decisions or assumptions
 
-
 Plan/Prompt:
 
 # Implementation Prompt: Full-Stack Calculator (React + Node.js)
@@ -74,7 +73,8 @@ Treat this brief (reproduced verbatim, apart from one typo fix) as the source of
 >
 > **Requirements**
 >
-> *Functional*
+> _Functional_
+>
 > - Operations:
 >   - Addition, Subtraction, Multiplication, Division
 >   - Optional: Exponentiation, Square Root, Percentage
@@ -87,23 +87,27 @@ Treat this brief (reproduced verbatim, apart from one typo fix) as the source of
 >   - Validate input and handle edge cases (division by zero, invalid data)
 >   - Return results in JSON format
 >
-> *Non-Functional*
+> _Non-Functional_
+>
 > - Clean, readable, and idiomatic code (frontend and backend)
 > - Unit tests covering key functionality for both layers
 > - Documentation: setup instructions, API usage, and design rationale
 > - Optional: Dockerfile for full-stack deployment
 >
 > **Constraints**
+>
 > - Frontend: React (TypeScript preferred)
 > - Backend: Go is preferred
 >
 > **Deliverables**
+>
 > - Git repository with frontend and backend code
 > - README with setup instructions, API examples, and design decisions
 > - Unit tests and coverage report
 > - Optional: Dockerfile to run frontend + backend together
 >
 > **Instructions**
+>
 > - Use any AI tooling you would like
 > - Spend ~2–4 hours on this assignment. Prioritize correctness, clarity, and maintainability over extras.
 > - Push your solution to GitHub, GitLab, or another Git repository.
@@ -121,17 +125,17 @@ Treat this brief (reproduced verbatim, apart from one typo fix) as the source of
 
 The stakeholder has confirmed these decisions and they are **final**. Do not reopen, weaken or "improve" them.
 
-| # | Decision | Choice | Rationale |
-|---|---|---|---|
-| D1 | UI model | A classic keypad calculator with **left-to-right chaining**, so `2 + 3 × 4 =` evaluates step by step to `20`. Each binary step makes one API call. Layout (5 rows × 4 keys): `C √ % ÷` / `7 8 9 ×` / `4 5 6 −` / `1 2 3 +` / `0 . ^ =`. The display shows the current input or result, and any errors. | Most users find a basic pocket calculator intuitive. All arithmetic stays on the backend. |
-| D2 | API shape | One `POST /api/v1/calculate` endpoint taking `{operation, operands[]}`, plus `GET /api/v1/operations` (lists the supported ops and their arity) and `GET /api/v1/health`. | One validation pipeline serves every operation. Both endpoints are driven by the same operation table, so they cannot drift apart. |
-| D3 | Operations | Binary: `add`, `subtract`, `multiply`, `divide`, `power`. Unary: `sqrt`, `percent`. `percent` is `x / 100`, unary like a phone calculator. `sqrt` rejects negative numbers. | Covers every required operation and all three optional ones, with simple and predictable semantics. |
-| D4 | Numbers | JS `number` (IEEE-754 float64). Results are rounded to **15 significant digits**, so `0.1 + 0.2` gives `0.3`. **Non-finite results** (Infinity or NaN, for example from `10^400` or `0^-1`) are rejected with an error. | Removes binary noise without an arbitrary-precision library, and the user sees an explicit error instead of `Infinity`. |
-| D5 | Backend stack | **Node.js** (not Go) + **Express** + **TypeScript**. Validation with **zod**. Tests with **Vitest + supertest**. **v8** coverage. | One language across the stack, a single toolchain and shared contract types. |
-| D6 | Frontend stack | **Vite + React + TypeScript**, **CSS Modules**, **Vitest + React Testing Library**. Component tests mock the API layer. In development the Vite dev server proxies `/api` to the backend. | A standard, minimal modern stack: scoped styles, no UI library, and the same test runner as the backend. |
-| D7 | Deployment | **Both** of these: (a) one multi-stage `Dockerfile` where Express serves the built frontend and the API on a single port; (b) a `docker-compose.yml` where nginx serves the frontend and reverse-proxies `/api` to a backend container. | (a) is the easiest to run. (b) shows a typical production topology. |
-| D8 | Extras | **Included:** GitHub Actions CI running lint, typecheck, test and coverage for both packages. **Excluded:** OpenAPI spec, keyboard input, calculation history. | Fits the timebox, and CI proves the quality gates are real. |
-| D9 | Repo layout | One monorepo using **npm workspaces**: `/backend`, `/frontend`, root `package.json` scripts, `README.md`, `PROMPTS.md`. A coverage threshold of **at least 80%** is enforced and fails the build when it is not met. §7.2 explains what "fails the build" means here. | One clone, one install, one CI pipeline. The coverage gate cannot be bypassed quietly. |
+| #   | Decision       | Choice                                                                                                                                                                                                                                                                                                 | Rationale                                                                                                                          |
+| --- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | UI model       | A classic keypad calculator with **left-to-right chaining**, so `2 + 3 × 4 =` evaluates step by step to `20`. Each binary step makes one API call. Layout (5 rows × 4 keys): `C √ % ÷` / `7 8 9 ×` / `4 5 6 −` / `1 2 3 +` / `0 . ^ =`. The display shows the current input or result, and any errors. | Most users find a basic pocket calculator intuitive. All arithmetic stays on the backend.                                          |
+| D2  | API shape      | One `POST /api/v1/calculate` endpoint taking `{operation, operands[]}`, plus `GET /api/v1/operations` (lists the supported ops and their arity) and `GET /api/v1/health`.                                                                                                                              | One validation pipeline serves every operation. Both endpoints are driven by the same operation table, so they cannot drift apart. |
+| D3  | Operations     | Binary: `add`, `subtract`, `multiply`, `divide`, `power`. Unary: `sqrt`, `percent`. `percent` is `x / 100`, unary like a phone calculator. `sqrt` rejects negative numbers.                                                                                                                            | Covers every required operation and all three optional ones, with simple and predictable semantics.                                |
+| D4  | Numbers        | JS `number` (IEEE-754 float64). Results are rounded to **15 significant digits**, so `0.1 + 0.2` gives `0.3`. **Non-finite results** (Infinity or NaN, for example from `10^400` or `0^-1`) are rejected with an error.                                                                                | Removes binary noise without an arbitrary-precision library, and the user sees an explicit error instead of `Infinity`.            |
+| D5  | Backend stack  | **Node.js** (not Go) + **Express** + **TypeScript**. Validation with **zod**. Tests with **Vitest + supertest**. **v8** coverage.                                                                                                                                                                      | One language across the stack, a single toolchain and shared contract types.                                                       |
+| D6  | Frontend stack | **Vite + React + TypeScript**, **CSS Modules**, **Vitest + React Testing Library**. Component tests mock the API layer. In development the Vite dev server proxies `/api` to the backend.                                                                                                              | A standard, minimal modern stack: scoped styles, no UI library, and the same test runner as the backend.                           |
+| D7  | Deployment     | **Both** of these: (a) one multi-stage `Dockerfile` where Express serves the built frontend and the API on a single port; (b) a `docker-compose.yml` where nginx serves the frontend and reverse-proxies `/api` to a backend container.                                                                | (a) is the easiest to run. (b) shows a typical production topology.                                                                |
+| D8  | Extras         | **Included:** GitHub Actions CI running lint, typecheck, test and coverage for both packages. **Excluded:** OpenAPI spec, keyboard input, calculation history.                                                                                                                                         | Fits the timebox, and CI proves the quality gates are real.                                                                        |
+| D9  | Repo layout    | One monorepo using **npm workspaces**: `/backend`, `/frontend`, root `package.json` scripts, `README.md`, `PROMPTS.md`. A coverage threshold of **at least 80%** is enforced and fails the build when it is not met. §7.2 explains what "fails the build" means here.                                  | One clone, one install, one CI pipeline. The coverage gate cannot be bypassed quietly.                                             |
 
 > **Note on the backend language.** The brief says "Go is preferred" for the backend, but the stakeholder has explicitly chosen **Node.js + TypeScript** (D5). This is a deliberate, approved deviation, not an oversight. The README must include a design decision titled "Backend language: Node.js instead of Go" that acknowledges the brief's preference and explains the choice.
 
@@ -169,6 +173,7 @@ The stakeholder has confirmed these decisions and they are **final**. Do not reo
    - a configurable API base URL.
 
    The README may list them as future work.
+
 7. **Ambiguity.** If something is genuinely ambiguous, pick the simplest option that fits this prompt and record it under **Assumptions** in the README. Do not stop to ask.
 8. **Dependency versions.** Install the current stable release within each major version named in this prompt. If npm reports a peer-dependency conflict, choose the newest set of versions that work together and report it as a deviation.
 9. **Honesty.**
@@ -515,7 +520,9 @@ let missing = false;
 for (const ws of workspaces) {
   const file = new URL(`${ws}/coverage/coverage-summary.json`, root);
   if (!existsSync(file)) {
-    console.error(`coverage-summary: no ${ws}/coverage/coverage-summary.json; run "npm run test -w ${ws}" first.`);
+    console.error(
+      `coverage-summary: no ${ws}/coverage/coverage-summary.json; run "npm run test -w ${ws}" first.`,
+    );
     missing = true;
     continue;
   }
@@ -533,16 +540,16 @@ process.exit(missing ? 1 : 0);
 
 The root scripts and CI call these workspace scripts **by name**, so the names are binding. The commands in this table are final.
 
-| script | backend | frontend |
-|---|---|---|
-| `dev` | `tsx watch src/server.ts` (`NODE_ENV` is unset, so it defaults to `development` and morgan uses the `dev` format) | `vite` (port 5173, proxies `/api` to `http://127.0.0.1:3000`) |
-| `build` | `npm run clean && tsc -p tsconfig.build.json` → `backend/dist/server.js` | `npm run typecheck && vite build` → `frontend/dist/` |
-| `start` | `node dist/server.js` | — |
-| `preview` | — | `vite preview` (port 4173, same proxy) |
-| `test` | `vitest run --coverage` | `vitest run --coverage` |
-| `test:watch` | `vitest` | `vitest` |
-| `lint` | `eslint .` | `eslint . --max-warnings 0` |
-| `typecheck` | `tsc -p tsconfig.json` (covers `src/` **and** `test/`) | `tsc -p tsconfig.json && tsc -p tsconfig.node.json` (covers tests) |
+| script       | backend                                                                                                           | frontend                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `dev`        | `tsx watch src/server.ts` (`NODE_ENV` is unset, so it defaults to `development` and morgan uses the `dev` format) | `vite` (port 5173, proxies `/api` to `http://127.0.0.1:3000`)      |
+| `build`      | `npm run clean && tsc -p tsconfig.build.json` → `backend/dist/server.js`                                          | `npm run typecheck && vite build` → `frontend/dist/`               |
+| `start`      | `node dist/server.js`                                                                                             | —                                                                  |
+| `preview`    | —                                                                                                                 | `vite preview` (port 4173, same proxy)                             |
+| `test`       | `vitest run --coverage`                                                                                           | `vitest run --coverage`                                            |
+| `test:watch` | `vitest`                                                                                                          | `vitest`                                                           |
+| `lint`       | `eslint .`                                                                                                        | `eslint . --max-warnings 0`                                        |
+| `typecheck`  | `tsc -p tsconfig.json` (covers `src/` **and** `test/`)                                                            | `tsc -p tsconfig.json && tsc -p tsconfig.node.json` (covers tests) |
 
 - `test` always runs with coverage, so a plain `npm run test -w <pkg>` enforces the 80% gate. To run tests without the gate, for example for intermediate commits, use `npx -w <pkg> vitest run`.
 - `lint` exits non-zero on any ESLint error. The frontend `lint` also fails on any warning.
@@ -559,12 +566,12 @@ This section is the single source of truth for the HTTP API, error codes, number
 - **Format:** JSON in and JSON out. Every API response, including errors, 404s and 405s, has `Content-Type: application/json; charset=utf-8` and `Cache-Control: no-store`.
 - **Ports:**
 
-  | Component | Port |
-  |---|---|
-  | Backend | `PORT`, default `3000`, host `0.0.0.0` (IPv4) |
-  | Vite dev server | `5173`, proxies `/api` to `http://127.0.0.1:3000` (an explicit IPv4 address, because `localhost` may resolve to `::1` first) |
-  | Single-container image | Exposes `3000` |
-  | docker-compose nginx | Host `8080` (container `80`), proxies `/api` to `backend:3000` |
+  | Component              | Port                                                                                                                         |
+  | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+  | Backend                | `PORT`, default `3000`, host `0.0.0.0` (IPv4)                                                                                |
+  | Vite dev server        | `5173`, proxies `/api` to `http://127.0.0.1:3000` (an explicit IPv4 address, because `localhost` may resolve to `::1` first) |
+  | Single-container image | Exposes `3000`                                                                                                               |
+  | docker-compose nginx   | Host `8080` (container `80`), proxies `/api` to `backend:3000`                                                               |
 
 - **Backend environment variables.** Do not add any others.
   - `PORT` (default `3000`).
@@ -680,13 +687,23 @@ Returns **200** with an `OperationsResponse` in **exactly** this order:
 ```json
 {
   "operations": [
-    { "name": "add",      "symbol": "+", "arity": 2, "description": "Sum of a and b" },
+    { "name": "add", "symbol": "+", "arity": 2, "description": "Sum of a and b" },
     { "name": "subtract", "symbol": "−", "arity": 2, "description": "a minus b" },
     { "name": "multiply", "symbol": "×", "arity": 2, "description": "Product of a and b" },
-    { "name": "divide",   "symbol": "÷", "arity": 2, "description": "a divided by b; b must not be 0" },
-    { "name": "power",    "symbol": "^", "arity": 2, "description": "a raised to the power b" },
-    { "name": "sqrt",     "symbol": "√", "arity": 1, "description": "Square root of a; a must be >= 0" },
-    { "name": "percent",  "symbol": "%", "arity": 1, "description": "a divided by 100" }
+    {
+      "name": "divide",
+      "symbol": "÷",
+      "arity": 2,
+      "description": "a divided by b; b must not be 0"
+    },
+    { "name": "power", "symbol": "^", "arity": 2, "description": "a raised to the power b" },
+    {
+      "name": "sqrt",
+      "symbol": "√",
+      "arity": 1,
+      "description": "Square root of a; a must be >= 0"
+    },
+    { "name": "percent", "symbol": "%", "arity": 1, "description": "a divided by 100" }
   ]
 }
 ```
@@ -744,15 +761,15 @@ Returns **200** with an `OperationsResponse` in **exactly** this order:
 
 Implement this table in `backend/src/calculator.ts` as a `Record<Operation, OperationDef>`. Its insertion order must match the order in §3.3.2.
 
-| name | symbol | arity | semantics (`a` = operands[0], `b` = operands[1]) | edge cases |
-|---|---|---|---|---|
-| `add` | `+` | 2 | `a + b` | Overflow (`1e308 + 1e308`) gives `NON_FINITE_RESULT`. |
-| `subtract` | `−` (U+2212) | 2 | `a - b` | Overflow (`-1e308 - 1e308`) gives `NON_FINITE_RESULT`. `0.3 - 0.1` gives `0.2` after rounding. |
-| `multiply` | `×` | 2 | `a * b` | Overflow gives `NON_FINITE_RESULT`. Underflow (`1e-200 * 1e-200`) gives `0`, which is fine. `-1 * 0` gives `-0`, which is normalised to `0`. |
-| `divide` | `÷` | 2 | `a / b` | When `b === 0` (including `-0`), throw `DIVISION_BY_ZERO` **before** dividing. `0 / 0` is also `DIVISION_BY_ZERO`. Overflow (`1e308 / 1e-10`) gives `NON_FINITE_RESULT`. |
-| `power` | `^` | 2 | `a ** b` | `0 ** 0` gives `1` (the JS convention, which is accepted). `0 ** -1` is Infinity, so `NON_FINITE_RESULT`. `10 ** 400` gives `NON_FINITE_RESULT`. `(-8) ** 0.5` is NaN, so `NON_FINITE_RESULT`. `2 ** -1` gives `0.5`. |
-| `sqrt` | `√` | 1 | `Math.sqrt(a)` | When `a < 0`, throw `NEGATIVE_SQRT` before computing. `sqrt(-0)` gives `-0`, which is normalised to `0`. `sqrt(2)` gives `1.4142135623731`. |
-| `percent` | `%` | 1 | `a / 100` | Unary, as on a phone calculator: `50` gives `0.5` and `-50` gives `-0.5`. Never fails on finite input. |
+| name       | symbol       | arity | semantics (`a` = operands[0], `b` = operands[1]) | edge cases                                                                                                                                                                                                            |
+| ---------- | ------------ | ----- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add`      | `+`          | 2     | `a + b`                                          | Overflow (`1e308 + 1e308`) gives `NON_FINITE_RESULT`.                                                                                                                                                                 |
+| `subtract` | `−` (U+2212) | 2     | `a - b`                                          | Overflow (`-1e308 - 1e308`) gives `NON_FINITE_RESULT`. `0.3 - 0.1` gives `0.2` after rounding.                                                                                                                        |
+| `multiply` | `×`          | 2     | `a * b`                                          | Overflow gives `NON_FINITE_RESULT`. Underflow (`1e-200 * 1e-200`) gives `0`, which is fine. `-1 * 0` gives `-0`, which is normalised to `0`.                                                                          |
+| `divide`   | `÷`          | 2     | `a / b`                                          | When `b === 0` (including `-0`), throw `DIVISION_BY_ZERO` **before** dividing. `0 / 0` is also `DIVISION_BY_ZERO`. Overflow (`1e308 / 1e-10`) gives `NON_FINITE_RESULT`.                                              |
+| `power`    | `^`          | 2     | `a ** b`                                         | `0 ** 0` gives `1` (the JS convention, which is accepted). `0 ** -1` is Infinity, so `NON_FINITE_RESULT`. `10 ** 400` gives `NON_FINITE_RESULT`. `(-8) ** 0.5` is NaN, so `NON_FINITE_RESULT`. `2 ** -1` gives `0.5`. |
+| `sqrt`     | `√`          | 1     | `Math.sqrt(a)`                                   | When `a < 0`, throw `NEGATIVE_SQRT` before computing. `sqrt(-0)` gives `-0`, which is normalised to `0`. `sqrt(2)` gives `1.4142135623731`.                                                                           |
+| `percent`  | `%`          | 1     | `a / 100`                                        | Unary, as on a phone calculator: `50` gives `0.5` and `-50` gives `-0.5`. Never fails on finite input.                                                                                                                |
 
 ### 3.5 Number rules
 
@@ -813,7 +830,13 @@ Because of this order, a request with both an unknown operation **and** a string
 Every non-2xx API response has exactly this shape (`ApiErrorBody`):
 
 ```json
-{ "error": { "code": "<ErrorCode>", "message": "<human-readable>", "details": [ /* only for VALIDATION_ERROR */ ] } }
+{
+  "error": {
+    "code": "<ErrorCode>",
+    "message": "<human-readable>",
+    "details": [/* only for VALIDATION_ERROR */]
+  }
+}
 ```
 
 - `code` is the stable, machine-readable contract. Clients branch on `code`, never on `message`.
@@ -824,20 +847,20 @@ Every non-2xx API response has exactly this shape (`ApiErrorBody`):
 
 The messages are fixed strings in `backend/src/errors.ts`.
 
-| code | HTTP | trigger | `message` (exact) |
-|---|---|---|---|
-| `MALFORMED_JSON` | 400 | The body is not valid JSON or is a top-level primitive, or the request was aborted or its size did not match `Content-Length` | `Request body is not valid JSON.` |
-| `VALIDATION_ERROR` | 400 | The zod shape check failed | `Request body failed validation.` |
-| `UNSUPPORTED_OPERATION` | 400 | `operation` is not one of the 7 names | `` `Unsupported operation '${op}'. Supported operations: add, subtract, multiply, divide, power, sqrt, percent.` `` |
-| `INVALID_OPERAND_COUNT` | 400 | `operands.length` ≠ arity | `` `Operation '${op}' expects ${arity} operand${arity === 1 ? '' : 's'} but received ${n}.` `` |
-| `UNSUPPORTED_MEDIA_TYPE` | 415 | A POST to `/calculate` without a JSON content type, or with an unsupported charset or content encoding | `Content-Type must be application/json.` |
-| `PAYLOAD_TOO_LARGE` | 413 | The body is larger than 10 kB | `Request body exceeds the 10kb limit.` |
-| `DIVISION_BY_ZERO` | 422 | `divide` with `b === 0` | `Division by zero is not allowed.` |
-| `NEGATIVE_SQRT` | 422 | `sqrt` with `a < 0` | `Cannot take the square root of a negative number.` |
-| `NON_FINITE_RESULT` | 422 | The result is ±Infinity or NaN | `The result is not a finite real number.` |
-| `NOT_FOUND` | 404 | An unknown path under `/api` (including `/api` itself) | `` `Route ${method} ${path} not found.` `` |
-| `METHOD_NOT_ALLOWED` | 405 | A known path with the wrong method (also sets `Allow`) | `` `Method ${method} not allowed on ${path}.` `` |
-| `INTERNAL_ERROR` | 500 | Any unexpected error | `An unexpected error occurred.` |
+| code                     | HTTP | trigger                                                                                                                       | `message` (exact)                                                                                                   |
+| ------------------------ | ---- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `MALFORMED_JSON`         | 400  | The body is not valid JSON or is a top-level primitive, or the request was aborted or its size did not match `Content-Length` | `Request body is not valid JSON.`                                                                                   |
+| `VALIDATION_ERROR`       | 400  | The zod shape check failed                                                                                                    | `Request body failed validation.`                                                                                   |
+| `UNSUPPORTED_OPERATION`  | 400  | `operation` is not one of the 7 names                                                                                         | `` `Unsupported operation '${op}'. Supported operations: add, subtract, multiply, divide, power, sqrt, percent.` `` |
+| `INVALID_OPERAND_COUNT`  | 400  | `operands.length` ≠ arity                                                                                                     | `` `Operation '${op}' expects ${arity} operand${arity === 1 ? '' : 's'} but received ${n}.` ``                      |
+| `UNSUPPORTED_MEDIA_TYPE` | 415  | A POST to `/calculate` without a JSON content type, or with an unsupported charset or content encoding                        | `Content-Type must be application/json.`                                                                            |
+| `PAYLOAD_TOO_LARGE`      | 413  | The body is larger than 10 kB                                                                                                 | `Request body exceeds the 10kb limit.`                                                                              |
+| `DIVISION_BY_ZERO`       | 422  | `divide` with `b === 0`                                                                                                       | `Division by zero is not allowed.`                                                                                  |
+| `NEGATIVE_SQRT`          | 422  | `sqrt` with `a < 0`                                                                                                           | `Cannot take the square root of a negative number.`                                                                 |
+| `NON_FINITE_RESULT`      | 422  | The result is ±Infinity or NaN                                                                                                | `The result is not a finite real number.`                                                                           |
+| `NOT_FOUND`              | 404  | An unknown path under `/api` (including `/api` itself)                                                                        | `` `Route ${method} ${path} not found.` ``                                                                          |
+| `METHOD_NOT_ALLOWED`     | 405  | A known path with the wrong method (also sets `Allow`)                                                                        | `` `Method ${method} not allowed on ${path}.` ``                                                                    |
+| `INTERNAL_ERROR`         | 500  | Any unexpected error                                                                                                          | `An unexpected error occurred.`                                                                                     |
 
 #### 3.7.3 Status-code policy
 
@@ -860,19 +883,22 @@ export class AppError extends Error {
     public readonly code: ErrorCode,
     message: string,
     public readonly details?: ValidationIssue[],
-  ) { super(message); this.name = 'AppError'; }
+  ) {
+    super(message);
+    this.name = 'AppError';
+  }
 }
 ```
 
 The central error handler maps exactly these cases:
 
-| error | response |
-|---|---|
-| `AppError` | Its own status and code |
-| body-parser `entity.too.large` | 413 `PAYLOAD_TOO_LARGE` |
-| body-parser `entity.parse.failed`, `request.aborted`, `request.size.invalid` | 400 `MALFORMED_JSON` |
-| body-parser `charset.unsupported`, `encoding.unsupported` | 415 `UNSUPPORTED_MEDIA_TYPE` |
-| anything else | 500 `INTERNAL_ERROR` |
+| error                                                                        | response                     |
+| ---------------------------------------------------------------------------- | ---------------------------- |
+| `AppError`                                                                   | Its own status and code      |
+| body-parser `entity.too.large`                                               | 413 `PAYLOAD_TOO_LARGE`      |
+| body-parser `entity.parse.failed`, `request.aborted`, `request.size.invalid` | 400 `MALFORMED_JSON`         |
+| body-parser `charset.unsupported`, `encoding.unsupported`                    | 415 `UNSUPPORTED_MEDIA_TYPE` |
+| anything else                                                                | 500 `INTERNAL_ERROR`         |
 
 For the 500 case, always log with `console.error('Unhandled error:', err)`. Any test that triggers a 500 must spy on `console.error`, silence the spy with `mockImplementation(() => {})` and assert that it was called once, so the test output stays clean.
 
@@ -884,7 +910,7 @@ Mount the middleware in **exactly** this order:
 
 1. `app.disable('x-powered-by')`, then **helmet**:
    ```ts
-   helmet({ contentSecurityPolicy: { directives: { upgradeInsecureRequests: null } } })
+   helmet({ contentSecurityPolicy: { directives: { upgradeInsecureRequests: null } } });
    ```
    This sets the standard security headers. You must disable `upgrade-insecure-requests` because the app is served over plain HTTP (localhost, Docker, a LAN IP), and that directive would break asset loading. The default CSP (`script-src 'self'`) works with Vite's production build.
 2. **morgan** request logging:
@@ -893,6 +919,7 @@ Mount the middleware in **exactly** this order:
    - not mounted at all when it is `test`.
 
    Never log request bodies.
+
 3. `app.use('/api', noStore)`, which sets `Cache-Control: no-store` on every `/api` response.
 4. The **API router** at `/api/v1`:
    - `/health`: GET, plus `.all(methodNotAllowed(['GET']))`.
@@ -900,6 +927,7 @@ Mount the middleware in **exactly** this order:
    - `/calculate`: `.post(requireJson, express.json({ limit: '10kb', strict: true }), postCalculate)`, plus `.all(methodNotAllowed(['POST']))`.
 
    The JSON body parser is applied **only** to the `/calculate` POST route.
+
 5. **API 404**: `app.use('/api', notFoundHandler)`. It must be mounted **before** static serving so that `/api` and `/api/anything` never return `index.html`.
 6. **Static SPA**, only when `STATIC_DIR` is set: `express.static(STATIC_DIR)` followed by a fallback middleware. The fallback sends `index.html` (with `{ root: STATIC_DIR }`) for `GET` and `HEAD` requests and calls `next()` for everything else. Use a plain `app.use` function, not a wildcard path, because Express 5 changed the wildcard syntax.
 7. The **central error handler** (a 4-argument middleware), last.
@@ -927,12 +955,12 @@ Requests:
 
 Errors:
 
-| Situation | Result |
-|---|---|
-| `fetch` rejects or the timeout fires | `ApiError('NETWORK_ERROR')`, with no status |
-| The body is not JSON or lacks the expected shape (for example nginx's 502 HTML page, or the Vite proxy's empty 500 when the backend is down) | `ApiError('UNEXPECTED_RESPONSE', status)` |
-| A non-2xx response with an `ApiErrorBody` | `ApiError(body.error.code, status)`, with `message = body.error.message` |
-| A 2xx response whose `result` is not a finite number | `ApiError('UNEXPECTED_RESPONSE', status)`, where the status is the 2xx status, for example 200 |
+| Situation                                                                                                                                    | Result                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `fetch` rejects or the timeout fires                                                                                                         | `ApiError('NETWORK_ERROR')`, with no status                                                    |
+| The body is not JSON or lacks the expected shape (for example nginx's 502 HTML page, or the Vite proxy's empty 500 when the backend is down) | `ApiError('UNEXPECTED_RESPONSE', status)`                                                      |
+| A non-2xx response with an `ApiErrorBody`                                                                                                    | `ApiError(body.error.code, status)`, with `message = body.error.message`                       |
+| A 2xx response whose `result` is not a finite number                                                                                         | `ApiError('UNEXPECTED_RESPONSE', status)`, where the status is the 2xx status, for example 200 |
 
 So when the backend is down behind a running proxy, the user sees `Error`, not `Network error`. `Network error` appears only when `fetch` itself rejects or times out, for example when the Vite server or nginx is also down.
 
@@ -943,13 +971,13 @@ In tests:
 
 The display shows short strings mapped from `code`, and **never** the server's `message`. Define the mapping in `frontend/src/api/errorMessages.ts`:
 
-| code | display text |
-|---|---|
-| `DIVISION_BY_ZERO` | `Cannot divide by zero` |
-| `NEGATIVE_SQRT` | `Invalid input` |
-| `NON_FINITE_RESULT` | `Math error` |
-| `NETWORK_ERROR` | `Network error` |
-| any other code, or a non-`ApiError` | `Error` |
+| code                                | display text            |
+| ----------------------------------- | ----------------------- |
+| `DIVISION_BY_ZERO`                  | `Cannot divide by zero` |
+| `NEGATIVE_SQRT`                     | `Invalid input`         |
+| `NON_FINITE_RESULT`                 | `Math error`            |
+| `NETWORK_ERROR`                     | `Network error`         |
+| any other code, or a non-`ApiError` | `Error`                 |
 
 ### 3.10 API usage examples
 
@@ -1246,7 +1274,11 @@ Copy it byte for byte from §3.2. Never edit one copy without editing the other.
 
 ```ts
 export type NodeEnv = 'development' | 'production' | 'test';
-export interface AppConfig { port: number; nodeEnv: NodeEnv; staticDir?: string }
+export interface AppConfig {
+  port: number;
+  nodeEnv: NodeEnv;
+  staticDir?: string;
+}
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig;
 ```
 
@@ -1363,8 +1395,14 @@ export function toValidationIssues(error: z.ZodError): ValidationIssue[];
 ```ts
 export function createApiRouter(): Router {
   const router = express.Router();
-  router.route('/health').get(getHealth).all(methodNotAllowed(['GET']));
-  router.route('/operations').get(getOperations).all(methodNotAllowed(['GET']));
+  router
+    .route('/health')
+    .get(getHealth)
+    .all(methodNotAllowed(['GET']));
+  router
+    .route('/operations')
+    .get(getOperations)
+    .all(methodNotAllowed(['GET']));
   router
     .route('/calculate')
     .post(requireJson, express.json({ limit: '10kb', strict: true }), postCalculate)
@@ -1425,23 +1463,23 @@ The frontend is a classic keypad calculator that evaluates step by step from lef
 
 ### 5.0 Binding frontend decisions
 
-| Decision | Value | Rationale |
-|---|---|---|
-| Tooling | Vite, React 19, strict TypeScript, CSS Modules | Matches D6. Scoped styles with no runtime cost. |
-| Tests | Vitest (`jsdom`), React Testing Library, `@testing-library/user-event`, `@testing-library/jest-dom`, v8 coverage | The same runner as the backend. |
-| Vitest version | The **same major version** of `vitest` and `@vitest/coverage-v8` as in `backend/` | Workspaces hoist dependencies, and mismatched majors lead to duplicate installs. |
-| Coverage | At least 80% on all four metrics, enforced through `coverage.thresholds` | D9 |
-| UI model | Left-to-right chaining: `2 + 3 × 4 =` gives `20`, not `14`. Each binary step makes one API call. | D1 |
-| Keypad | `C √ % ÷` / `7 8 9 ×` / `4 5 6 −` / `1 2 3 +` / `0 . ^ =`. Do not add, remove or reorder keys. | D1 |
-| Negative numbers | There is no `+/-` key. A negative number can only appear as a **result** (`0 − 5 =` gives `-5`), which can then be used as an operand. | The layout has no sign key. Document this in the README. |
-| Repeat-equals | **Not supported.** `=` does nothing when no operation is pending. | Avoids hidden "last operation" state. Document it as an assumption. |
-| `=` straight after an operator | `5 × =` computes `multiply [5, 5]` | Follows from the uniform rule that `=` always sends `[accumulator, Number(display)]`. |
-| Percent | Unary `x / 100` applied to the display value: `200 + 10 % =` gives `200.1` | D3. Document it, because some phone calculators behave differently. |
-| Max input length | 15 digits per typed number. `.` does not count. | Matches the 15-significant-digit rounding. |
-| Rounding | **Never** re-round. Display `String(result)` (for example `1e+21` or `1e-7`). | The backend owns rounding. |
-| API base URL | Relative URLs only. No `VITE_API_BASE_URL` and no `import.meta.env` variable for the API. | Every mode is same-origin, and the backend has no CORS. |
-| Operations list | The keypad is static. Never call `GET /api/v1/operations`. | §3.3.2 |
-| Out of scope | Keyboard input, history, `+/-`, backspace, memory keys, an OpenAPI client, i18n, Redux or Zustand, CSS frameworks | D8 |
+| Decision                       | Value                                                                                                                                  | Rationale                                                                             |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Tooling                        | Vite, React 19, strict TypeScript, CSS Modules                                                                                         | Matches D6. Scoped styles with no runtime cost.                                       |
+| Tests                          | Vitest (`jsdom`), React Testing Library, `@testing-library/user-event`, `@testing-library/jest-dom`, v8 coverage                       | The same runner as the backend.                                                       |
+| Vitest version                 | The **same major version** of `vitest` and `@vitest/coverage-v8` as in `backend/`                                                      | Workspaces hoist dependencies, and mismatched majors lead to duplicate installs.      |
+| Coverage                       | At least 80% on all four metrics, enforced through `coverage.thresholds`                                                               | D9                                                                                    |
+| UI model                       | Left-to-right chaining: `2 + 3 × 4 =` gives `20`, not `14`. Each binary step makes one API call.                                       | D1                                                                                    |
+| Keypad                         | `C √ % ÷` / `7 8 9 ×` / `4 5 6 −` / `1 2 3 +` / `0 . ^ =`. Do not add, remove or reorder keys.                                         | D1                                                                                    |
+| Negative numbers               | There is no `+/-` key. A negative number can only appear as a **result** (`0 − 5 =` gives `-5`), which can then be used as an operand. | The layout has no sign key. Document this in the README.                              |
+| Repeat-equals                  | **Not supported.** `=` does nothing when no operation is pending.                                                                      | Avoids hidden "last operation" state. Document it as an assumption.                   |
+| `=` straight after an operator | `5 × =` computes `multiply [5, 5]`                                                                                                     | Follows from the uniform rule that `=` always sends `[accumulator, Number(display)]`. |
+| Percent                        | Unary `x / 100` applied to the display value: `200 + 10 % =` gives `200.1`                                                             | D3. Document it, because some phone calculators behave differently.                   |
+| Max input length               | 15 digits per typed number. `.` does not count.                                                                                        | Matches the 15-significant-digit rounding.                                            |
+| Rounding                       | **Never** re-round. Display `String(result)` (for example `1e+21` or `1e-7`).                                                          | The backend owns rounding.                                                            |
+| API base URL                   | Relative URLs only. No `VITE_API_BASE_URL` and no `import.meta.env` variable for the API.                                              | Every mode is same-origin, and the backend has no CORS.                               |
+| Operations list                | The keypad is static. Never call `GET /api/v1/operations`.                                                                             | §3.3.2                                                                                |
+| Out of scope                   | Keyboard input, history, `+/-`, backspace, memory keys, an OpenAPI client, i18n, Redux or Zustand, CSS frameworks                      | D8                                                                                    |
 
 ### 5.1 Directory tree
 
@@ -1636,7 +1674,11 @@ export const REQUEST_TIMEOUT_MS = 10_000;
 export type ClientErrorCode = ErrorCode | 'NETWORK_ERROR' | 'UNEXPECTED_RESPONSE';
 
 export class ApiError extends Error {
-  constructor(public readonly code: ClientErrorCode, message: string, public readonly status?: number) {
+  constructor(
+    public readonly code: ClientErrorCode,
+    message: string,
+    public readonly status?: number,
+  ) {
     super(message);
     this.name = 'ApiError';
   }
@@ -1645,15 +1687,21 @@ export class ApiError extends Error {
 function isApiErrorBody(x: unknown): x is ApiErrorBody {
   if (typeof x !== 'object' || x === null || !('error' in x)) return false;
   const e = (x as { error: unknown }).error;
-  return typeof e === 'object' && e !== null
-    && typeof (e as { code?: unknown }).code === 'string'
-    && typeof (e as { message?: unknown }).message === 'string';
+  return (
+    typeof e === 'object' &&
+    e !== null &&
+    typeof (e as { code?: unknown }).code === 'string' &&
+    typeof (e as { message?: unknown }).message === 'string'
+  );
 }
 
 function hasFiniteResult(x: unknown): x is CalculateResponse {
-  return typeof x === 'object' && x !== null
-    && typeof (x as { result?: unknown }).result === 'number'
-    && Number.isFinite((x as { result: number }).result);
+  return (
+    typeof x === 'object' &&
+    x !== null &&
+    typeof (x as { result?: unknown }).result === 'number' &&
+    Number.isFinite((x as { result: number }).result)
+  );
 }
 
 export async function calculate(operation: Operation, operands: number[]): Promise<number> {
@@ -1681,11 +1729,16 @@ export async function calculate(operation: Operation, operands: number[]): Promi
   }
 
   if (!response.ok) {
-    if (isApiErrorBody(body)) throw new ApiError(body.error.code, body.error.message, response.status);
+    if (isApiErrorBody(body))
+      throw new ApiError(body.error.code, body.error.message, response.status);
     throw new ApiError('UNEXPECTED_RESPONSE', 'Unexpected error response.', response.status);
   }
   if (!hasFiniteResult(body)) {
-    throw new ApiError('UNEXPECTED_RESPONSE', 'Response did not contain a finite result.', response.status);
+    throw new ApiError(
+      'UNEXPECTED_RESPONSE',
+      'Response did not contain a finite result.',
+      response.status,
+    );
   }
   return body.result;
 }
@@ -1724,20 +1777,23 @@ export type KeyId = Digit | 'decimal' | BinaryOperation | UnaryOperation | 'equa
 
 export type Continuation =
   | { kind: 'chain'; next: BinaryOperation } // operator pressed while a binary op was pending with a typed 2nd operand
-  | { kind: 'equals' }                       // '=' with a pending binary op
-  | { kind: 'unary' };                       // sqrt or percent on the display value
+  | { kind: 'equals' } // '=' with a pending binary op
+  | { kind: 'unary' }; // sqrt or percent on the display value
 
-export interface InFlight { requestId: number; continuation: Continuation }
+export interface InFlight {
+  requestId: number;
+  continuation: Continuation;
+}
 
 export interface CalcState {
-  display: string;                          // text being typed, or String(lastResult); never an error text
-  accumulator: number | null;               // left operand of the pending binary op
+  display: string; // text being typed, or String(lastResult); never an error text
+  accumulator: number | null; // left operand of the pending binary op
   pendingOperation: BinaryOperation | null;
-  awaitingOperand: boolean;                 // true right after a binary operator: 2nd operand not yet entered
-  overwrite: boolean;                       // true when next digit/'.' must REPLACE display (after operator, '=', unary)
-  error: string | null;                     // display text of the last error (already mapped), or null
-  loading: boolean;                         // a compute request is in flight
-  inFlight: InFlight | null;                // invariant: loading === (inFlight !== null)
+  awaitingOperand: boolean; // true right after a binary operator: 2nd operand not yet entered
+  overwrite: boolean; // true when next digit/'.' must REPLACE display (after operator, '=', unary)
+  error: string | null; // display text of the last error (already mapped), or null
+  loading: boolean; // a compute request is in flight
+  inFlight: InFlight | null; // invariant: loading === (inFlight !== null)
 }
 
 export type CalcAction =
@@ -1749,7 +1805,11 @@ export type CalcAction =
   | { type: 'computeSuccess'; requestId: number; result: number }
   | { type: 'computeFailure'; requestId: number; message: string };
 
-export interface ComputeRequest { operation: Operation; operands: number[]; continuation: Continuation }
+export interface ComputeRequest {
+  operation: Operation;
+  operands: number[];
+  continuation: Continuation;
+}
 ```
 
 **Invariants.** The reducer tests assert these after every step:
@@ -1764,22 +1824,22 @@ export interface ComputeRequest { operation: Operation; operands: number[]; cont
 
 Export `KEYPAD: readonly KeyDef[]` in DOM order, where `KeyDef = { id: KeyId; label: string; ariaLabel: string; kind: 'digit' | 'decimal' | 'operator' | 'unary' | 'equals' | 'clear' }`.
 
-| row | id | label | ariaLabel | kind |
-|---|---|---|---|---|
-| 1 | `clear` | `C` | `Clear` | clear |
-| 1 | `sqrt` | `√` | `Square root` | unary |
-| 1 | `percent` | `%` | `Percent` | unary |
-| 1 | `divide` | `÷` | `Divide` | operator |
-| 2 | `7` `8` `9` | same | `7` `8` `9` | digit |
-| 2 | `multiply` | `×` | `Multiply` | operator |
-| 3 | `4` `5` `6` | same | `4` `5` `6` | digit |
-| 3 | `subtract` | `−` (U+2212) | `Subtract` | operator |
-| 4 | `1` `2` `3` | same | `1` `2` `3` | digit |
-| 4 | `add` | `+` | `Add` | operator |
-| 5 | `0` | `0` | `0` | digit |
-| 5 | `decimal` | `.` | `Decimal point` | decimal |
-| 5 | `power` | `^` | `Power` | operator |
-| 5 | `equals` | `=` | `Equals` | equals |
+| row | id          | label        | ariaLabel       | kind     |
+| --- | ----------- | ------------ | --------------- | -------- |
+| 1   | `clear`     | `C`          | `Clear`         | clear    |
+| 1   | `sqrt`      | `√`          | `Square root`   | unary    |
+| 1   | `percent`   | `%`          | `Percent`       | unary    |
+| 1   | `divide`    | `÷`          | `Divide`        | operator |
+| 2   | `7` `8` `9` | same         | `7` `8` `9`     | digit    |
+| 2   | `multiply`  | `×`          | `Multiply`      | operator |
+| 3   | `4` `5` `6` | same         | `4` `5` `6`     | digit    |
+| 3   | `subtract`  | `−` (U+2212) | `Subtract`      | operator |
+| 4   | `1` `2` `3` | same         | `1` `2` `3`     | digit    |
+| 4   | `add`       | `+`          | `Add`           | operator |
+| 5   | `0`         | `0`          | `0`             | digit    |
+| 5   | `decimal`   | `.`          | `Decimal point` | decimal  |
+| 5   | `power`     | `^`          | `Power`         | operator |
+| 5   | `equals`    | `=`          | `Equals`        | equals   |
 
 Also export:
 
@@ -1866,13 +1926,13 @@ After an error:
 
 **`keyToAction(key)`:**
 
-| key | action |
-|---|---|
-| digit | `{ type: 'digit', digit }` |
-| `decimal` | `{ type: 'decimal' }` |
-| binary operator | `{ type: 'operator', operation }` |
-| `clear` | `{ type: 'clear' }` |
-| `equals`, `sqrt`, `percent` | `null` |
+| key                         | action                            |
+| --------------------------- | --------------------------------- |
+| digit                       | `{ type: 'digit', digit }`        |
+| `decimal`                   | `{ type: 'decimal' }`             |
+| binary operator             | `{ type: 'operator', operation }` |
+| `clear`                     | `{ type: 'clear' }`               |
+| `equals`, `sqrt`, `percent` | `null`                            |
 
 #### 5.4.4 Selectors (`selectors.ts`)
 
@@ -1899,44 +1959,47 @@ import type { CalcAction, KeyId } from './types';
 export function useCalculator() {
   const [state, dispatch] = useReducer(calculatorReducer, initialState);
   const stateRef = useRef(initialState); // latest state, updated synchronously by apply()
-  const busyRef = useRef(false);         // synchronous guard against double-clicks within one tick
-  const lastIdRef = useRef(0);           // latest issued request id; anything else is stale
+  const busyRef = useRef(false); // synchronous guard against double-clicks within one tick
+  const lastIdRef = useRef(0); // latest issued request id; anything else is stale
 
   const apply = useCallback((action: CalcAction) => {
     stateRef.current = calculatorReducer(stateRef.current, action);
     dispatch(action);
   }, []);
 
-  const press = useCallback((key: KeyId) => {
-    if (key === 'clear') {
-      busyRef.current = false;
-      lastIdRef.current += 1;      // invalidates any in-flight request
-      apply({ type: 'clear' });
-      return;
-    }
-    if (busyRef.current) return;
-    const request = getComputeRequest(stateRef.current, key);
-    if (!request) {
-      const action = keyToAction(key);
-      if (action) apply(action);
-      return;
-    }
-    const requestId = ++lastIdRef.current;
-    busyRef.current = true;
-    apply({ type: 'computeStart', requestId, continuation: request.continuation });
-    calculate(request.operation, request.operands).then(
-      (result) => {
-        if (requestId !== lastIdRef.current) return;
+  const press = useCallback(
+    (key: KeyId) => {
+      if (key === 'clear') {
         busyRef.current = false;
-        apply({ type: 'computeSuccess', requestId, result });
-      },
-      (error: unknown) => {
-        if (requestId !== lastIdRef.current) return;
-        busyRef.current = false;
-        apply({ type: 'computeFailure', requestId, message: toDisplayMessage(error) });
-      },
-    );
-  }, [apply]);
+        lastIdRef.current += 1; // invalidates any in-flight request
+        apply({ type: 'clear' });
+        return;
+      }
+      if (busyRef.current) return;
+      const request = getComputeRequest(stateRef.current, key);
+      if (!request) {
+        const action = keyToAction(key);
+        if (action) apply(action);
+        return;
+      }
+      const requestId = ++lastIdRef.current;
+      busyRef.current = true;
+      apply({ type: 'computeStart', requestId, continuation: request.continuation });
+      calculate(request.operation, request.operands).then(
+        (result) => {
+          if (requestId !== lastIdRef.current) return;
+          busyRef.current = false;
+          apply({ type: 'computeSuccess', requestId, result });
+        },
+        (error: unknown) => {
+          if (requestId !== lastIdRef.current) return;
+          busyRef.current = false;
+          apply({ type: 'computeFailure', requestId, message: toDisplayMessage(error) });
+        },
+      );
+    },
+    [apply],
+  );
 
   return { state, press };
 }
@@ -2310,49 +2373,49 @@ jobs:
 **(stretch, M13)** Add this `docker` job under `jobs:`. Every check stores the curl output in a variable before grepping it. Piping `curl` straight into `grep -q` can make curl exit 23 (SIGPIPE), which fails the step under `bash -eo pipefail`.
 
 ```yaml
-  docker:
-    name: Docker build & smoke test
-    needs: [repo-checks, package]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
+docker:
+  name: Docker build & smoke test
+  needs: [repo-checks, package]
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v5
 
-      - name: Build single image
-        run: docker build -t calculator:ci .
+    - name: Build single image
+      run: docker build -t calculator:ci .
 
-      - name: Smoke test single image
-        run: |
-          docker run -d --name calc -p 3000:3000 calculator:ci
-          for i in $(seq 1 30); do curl -fsS localhost:3000/api/v1/health >/dev/null && break; sleep 1; done
-          out=$(curl -fsS localhost:3000/api/v1/health); grep -q '"status":"ok"' <<<"$out"
-          out=$(curl -fsS -X POST localhost:3000/api/v1/calculate \
-            -H 'Content-Type: application/json' \
-            -d '{"operation":"add","operands":[0.1,0.2]}'); grep -q '"result":0.3' <<<"$out"
-          out=$(curl -fsS localhost:3000/); grep -q '<div id="root">' <<<"$out"
-          test "$(docker exec calc whoami)" = "node"
+    - name: Smoke test single image
+      run: |
+        docker run -d --name calc -p 3000:3000 calculator:ci
+        for i in $(seq 1 30); do curl -fsS localhost:3000/api/v1/health >/dev/null && break; sleep 1; done
+        out=$(curl -fsS localhost:3000/api/v1/health); grep -q '"status":"ok"' <<<"$out"
+        out=$(curl -fsS -X POST localhost:3000/api/v1/calculate \
+          -H 'Content-Type: application/json' \
+          -d '{"operation":"add","operands":[0.1,0.2]}'); grep -q '"result":0.3' <<<"$out"
+        out=$(curl -fsS localhost:3000/); grep -q '<div id="root">' <<<"$out"
+        test "$(docker exec calc whoami)" = "node"
 
-      - name: Single image logs
-        if: failure()
-        run: docker logs calc || true
+    - name: Single image logs
+      if: failure()
+      run: docker logs calc || true
 
-      - name: Compose build & smoke test
-        run: |
-          docker compose up -d --build --wait --wait-timeout 120
-          out=$(curl -fsS localhost:8080/api/v1/health); grep -q '"status":"ok"' <<<"$out"
-          out=$(curl -fsS -X POST localhost:8080/api/v1/calculate \
-            -H 'Content-Type: application/json' \
-            -d '{"operation":"sqrt","operands":[16]}'); grep -q '"result":4' <<<"$out"
-          out=$(curl -fsS localhost:8080/); grep -q '<div id="root">' <<<"$out"
+    - name: Compose build & smoke test
+      run: |
+        docker compose up -d --build --wait --wait-timeout 120
+        out=$(curl -fsS localhost:8080/api/v1/health); grep -q '"status":"ok"' <<<"$out"
+        out=$(curl -fsS -X POST localhost:8080/api/v1/calculate \
+          -H 'Content-Type: application/json' \
+          -d '{"operation":"sqrt","operands":[16]}'); grep -q '"result":4' <<<"$out"
+        out=$(curl -fsS localhost:8080/); grep -q '<div id="root">' <<<"$out"
 
-      - name: Compose logs
-        if: failure()
-        run: docker compose logs || true
+    - name: Compose logs
+      if: failure()
+      run: docker compose logs || true
 
-      - name: Tear down
-        if: always()
-        run: |
-          docker rm -f calc || true
-          docker compose down -v || true
+    - name: Tear down
+      if: always()
+      run: |
+        docker rm -f calc || true
+        docker compose down -v || true
 ```
 
 - Pin actions to a major version tag, never `@main`. You may move to a newer major if it works.
@@ -2365,10 +2428,10 @@ jobs:
 
 ### 7.0 MUST and SHOULD test rows
 
-| Priority | Backend | Frontend |
-|---|---|---|
-| **MUST** (always write these) | contract rows 1–44, D1–D48, V1–V10, C1–C9 | R1–R45, FC1–FC11, UI1–UI21 |
-| **SHOULD** (write them unless the §0a priority cut applies) | A1–A33, E1–E4, M1–M6 | S1–S5, FE1–FE6, K1–K6, DS1–DS4, AP1 |
+| Priority                                                    | Backend                                   | Frontend                            |
+| ----------------------------------------------------------- | ----------------------------------------- | ----------------------------------- |
+| **MUST** (always write these)                               | contract rows 1–44, D1–D48, V1–V10, C1–C9 | R1–R45, FC1–FC11, UI1–UI21          |
+| **SHOULD** (write them unless the §0a priority cut applies) | A1–A33, E1–E4, M1–M6                      | S1–S5, FE1–FE6, K1–K6, DS1–DS4, AP1 |
 
 - Write the MUST rows of a milestone first, then its SHOULD rows.
 - Even with SHOULD rows skipped, coverage must stay at least 80%.
@@ -2376,14 +2439,14 @@ jobs:
 
 ### 7.1 Strategy
 
-| Layer | What | Tool | Mocking |
-|---|---|---|---|
-| Backend domain | `calculator.ts`, `errors.ts`, `validation.ts` and `config.ts`, as pure unit tests | Vitest | none |
-| Backend HTTP | Every contract rule: status, code, headers, order of checks | Vitest + supertest against `createApp()` (no ports opened) | `calculate` wrapped in `vi.fn`, overridden only for the 500 row |
-| Backend middleware | Edge branches that are hard to reach over HTTP | Vitest with stub `req` and `res` | stubs |
-| Frontend client | `fetch` handling, timeout, error mapping | Vitest | `vi.stubGlobal('fetch', …)` |
-| Frontend logic | The pure reducer state machine and selectors | Vitest | a fake API, **only** inside the test helper |
-| Frontend UI | Components and the full calculator integration | Vitest + RTL + user-event | `vi.mock` of `api/client` (keeping the real `ApiError`) |
+| Layer              | What                                                                              | Tool                                                       | Mocking                                                         |
+| ------------------ | --------------------------------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------- |
+| Backend domain     | `calculator.ts`, `errors.ts`, `validation.ts` and `config.ts`, as pure unit tests | Vitest                                                     | none                                                            |
+| Backend HTTP       | Every contract rule: status, code, headers, order of checks                       | Vitest + supertest against `createApp()` (no ports opened) | `calculate` wrapped in `vi.fn`, overridden only for the 500 row |
+| Backend middleware | Edge branches that are hard to reach over HTTP                                    | Vitest with stub `req` and `res`                           | stubs                                                           |
+| Frontend client    | `fetch` handling, timeout, error mapping                                          | Vitest                                                     | `vi.stubGlobal('fetch', …)`                                     |
+| Frontend logic     | The pure reducer state machine and selectors                                      | Vitest                                                     | a fake API, **only** inside the test helper                     |
+| Frontend UI        | Components and the full calculator integration                                    | Vitest + RTL + user-event                                  | `vi.mock` of `api/client` (keeping the real `ApiError`)         |
 
 General rules:
 
@@ -2430,7 +2493,7 @@ The frontend coverage block lives in `frontend/vite.config.ts` (§5.2).
   - HTML/lcov: `backend/coverage/` and `frontend/coverage/`, each containing `index.html`, `lcov.info` and `coverage-summary.json`. These directories are git-ignored, and CI uploads them as artifacts.
   - **Committed text report: `docs/coverage.md`.** The brief lists a coverage report as a deliverable, and without a push no CI artifact exists. Generate it like this:
     1. Run `npm run test:coverage 2>&1 | tee /tmp/calc-coverage.txt`.
-    2. Write `docs/coverage.md` with: the summary table that the script printed at the end; each package's per-file `text` reporter table, copied from the run into a ```` ```text ```` fence under a `## backend` or `## frontend` heading; and a final line `_Generated on YYYY-MM-DD at commit <short-sha>._`, where `<short-sha>` is the output of `git rev-parse --short HEAD` at the moment you ran the coverage command, before the docs commit.
+    2. Write `docs/coverage.md` with: the summary table that the script printed at the end; each package's per-file `text` reporter table, copied from the run into a ` ```text ` fence under a `## backend` or `## frontend` heading; and a final line `_Generated on YYYY-MM-DD at commit <short-sha>._`, where `<short-sha>` is the output of `git rev-parse --short HEAD` at the moment you ran the coverage command, before the docs commit.
     3. Link it from the README.
   - Also paste the summary table into the README.
 - **Prove the gate** in both packages:
@@ -2445,7 +2508,9 @@ Every domain-error assertion checks `instanceof AppError`, `status` and `code`. 
 
 ```ts
 function expectAppError(fn: () => unknown, status: number, code: ErrorCode) {
-  try { fn(); } catch (e) {
+  try {
+    fn();
+  } catch (e) {
     expect(e).toBeInstanceOf(AppError);
     expect((e as AppError).status).toBe(status);
     expect((e as AppError).code).toBe(code);
@@ -2489,52 +2554,52 @@ Each row asserts:
 - the `Allow` header on 405 rows;
 - for validation rows, the detail paths, always through the helper, for example `expect(paths(res)).toContain('operands.0')`.
 
-| # | request | expected |
-|---|---|---|
-| 1 | `GET /api/v1/health` | 200 `{status:"ok"}` |
-| 2 | `GET /api/v1/operations` | 200, 7 entries in §3.3.2 order with the correct arity |
-| 3 | POST `{add,[2,3]}` | 200, result `5`, operation and operands echoed |
-| 4 | POST `{add,[0.1,0.2]}` | 200, result `0.3` |
-| 5 | POST `{subtract,[0.3,0.1]}` | 200, result `0.2` |
-| 6 | POST `{multiply,[-1,0]}` | 200, result `0` |
-| 7 | POST `{divide,[10,4]}` | 200, result `2.5` |
-| 8 | POST `{divide,[1,3]}` | 200, result `0.333333333333333` |
-| 9 | POST `{divide,[5,0]}` | 422 `DIVISION_BY_ZERO` |
-| 10 | POST `{divide,[0,0]}` | 422 `DIVISION_BY_ZERO` |
-| 11 | POST `{power,[2,10]}` | 200, result `1024` |
-| 12 | POST `{power,[2,-1]}` | 200, result `0.5` |
-| 13 | POST `{power,[0,0]}` | 200, result `1` |
-| 14 | POST `{power,[0,-1]}` | 422 `NON_FINITE_RESULT` |
-| 15 | POST `{power,[10,400]}` | 422 `NON_FINITE_RESULT` |
-| 16 | POST `{power,[-8,0.5]}` | 422 `NON_FINITE_RESULT` |
-| 17 | POST `{multiply,[1e308,10]}` | 422 `NON_FINITE_RESULT` |
-| 18 | POST `{add,[1.7976931348623157e308,0]}` | 200, result `Number.MAX_VALUE` (the rounding-overflow fallback) |
-| 19 | POST `{sqrt,[9]}` | 200, result `3` |
-| 20 | POST `{sqrt,[2]}` | 200, result `1.4142135623731` |
-| 21 | POST `{sqrt,[-4]}` | 422 `NEGATIVE_SQRT` |
-| 22 | POST `{percent,[50]}` | 200, result `0.5` |
-| 23 | POST `{operation:"modulo",operands:[1,2]}` | 400 `UNSUPPORTED_OPERATION` |
-| 24 | POST `{operation:"ADD",operands:[1,2]}` | 400 `UNSUPPORTED_OPERATION` |
-| 25 | POST `{sqrt,[1,2]}` | 400 `INVALID_OPERAND_COUNT` |
-| 26 | POST `{add,[1]}` | 400 `INVALID_OPERAND_COUNT` |
-| 27 | POST `{add,[]}` | 400 `INVALID_OPERAND_COUNT` |
-| 28 | POST `{add,["2",3]}` | 400 `VALIDATION_ERROR`, with a detail at path `operands.0` |
-| 29 | POST `{add,[true,3]}` and `{add,[null,3]}` | 400 `VALIDATION_ERROR` |
-| 30 | POST raw `{"operation":"add","operands":[1e309,1]}` | 400 `VALIDATION_ERROR` |
-| 31 | POST `{operands:[1,2]}` (operation missing) | 400 `VALIDATION_ERROR`, path `operation` |
-| 32 | POST `{add,[1,2],extra:1}` | 400 `VALIDATION_ERROR` |
-| 33 | POST `{operation:"modulo",operands:["x"]}` | 400 `VALIDATION_ERROR` (the shape check runs before the lookup) |
-| 34 | POST `[1,2]` | 400 `VALIDATION_ERROR` |
-| 35 | POST raw `{"operation":` (malformed) | 400 `MALFORMED_JSON` |
-| 36 | POST raw `null` | 400 `MALFORMED_JSON` |
-| 37 | POST with `Content-Type: text/plain` | 415 `UNSUPPORTED_MEDIA_TYPE` |
-| 38 | POST a body over 10 kB (`operation` = 11,000 × `"a"`) | 413 `PAYLOAD_TOO_LARGE` |
-| 39 | `GET /api/v1/calculate` | 405 `METHOD_NOT_ALLOWED`, `Allow: POST` |
-| 40 | `POST /api/v1/health` | 405, `Allow: GET` |
-| 41 | `GET /api/v1/nope` and `GET /api/v2/calculate` | 404 `NOT_FOUND`, JSON content type |
-| 42 | any API response | `Cache-Control: no-store`, and no `X-Powered-By` header |
-| 43 | `vi.mocked(calculate).mockImplementationOnce(() => { throw new Error('boom: secret internals'); })`, with `console.error` spied and silenced | 500 `INTERNAL_ERROR`, message `An unexpected error occurred.` (see the row 43 details below) |
-| 44 | Static app (see below): `GET /` and `GET /some/client/route` | 200 HTML. `GET /api/v1/nope` still returns 404 JSON |
+| #   | request                                                                                                                                      | expected                                                                                     |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 1   | `GET /api/v1/health`                                                                                                                         | 200 `{status:"ok"}`                                                                          |
+| 2   | `GET /api/v1/operations`                                                                                                                     | 200, 7 entries in §3.3.2 order with the correct arity                                        |
+| 3   | POST `{add,[2,3]}`                                                                                                                           | 200, result `5`, operation and operands echoed                                               |
+| 4   | POST `{add,[0.1,0.2]}`                                                                                                                       | 200, result `0.3`                                                                            |
+| 5   | POST `{subtract,[0.3,0.1]}`                                                                                                                  | 200, result `0.2`                                                                            |
+| 6   | POST `{multiply,[-1,0]}`                                                                                                                     | 200, result `0`                                                                              |
+| 7   | POST `{divide,[10,4]}`                                                                                                                       | 200, result `2.5`                                                                            |
+| 8   | POST `{divide,[1,3]}`                                                                                                                        | 200, result `0.333333333333333`                                                              |
+| 9   | POST `{divide,[5,0]}`                                                                                                                        | 422 `DIVISION_BY_ZERO`                                                                       |
+| 10  | POST `{divide,[0,0]}`                                                                                                                        | 422 `DIVISION_BY_ZERO`                                                                       |
+| 11  | POST `{power,[2,10]}`                                                                                                                        | 200, result `1024`                                                                           |
+| 12  | POST `{power,[2,-1]}`                                                                                                                        | 200, result `0.5`                                                                            |
+| 13  | POST `{power,[0,0]}`                                                                                                                         | 200, result `1`                                                                              |
+| 14  | POST `{power,[0,-1]}`                                                                                                                        | 422 `NON_FINITE_RESULT`                                                                      |
+| 15  | POST `{power,[10,400]}`                                                                                                                      | 422 `NON_FINITE_RESULT`                                                                      |
+| 16  | POST `{power,[-8,0.5]}`                                                                                                                      | 422 `NON_FINITE_RESULT`                                                                      |
+| 17  | POST `{multiply,[1e308,10]}`                                                                                                                 | 422 `NON_FINITE_RESULT`                                                                      |
+| 18  | POST `{add,[1.7976931348623157e308,0]}`                                                                                                      | 200, result `Number.MAX_VALUE` (the rounding-overflow fallback)                              |
+| 19  | POST `{sqrt,[9]}`                                                                                                                            | 200, result `3`                                                                              |
+| 20  | POST `{sqrt,[2]}`                                                                                                                            | 200, result `1.4142135623731`                                                                |
+| 21  | POST `{sqrt,[-4]}`                                                                                                                           | 422 `NEGATIVE_SQRT`                                                                          |
+| 22  | POST `{percent,[50]}`                                                                                                                        | 200, result `0.5`                                                                            |
+| 23  | POST `{operation:"modulo",operands:[1,2]}`                                                                                                   | 400 `UNSUPPORTED_OPERATION`                                                                  |
+| 24  | POST `{operation:"ADD",operands:[1,2]}`                                                                                                      | 400 `UNSUPPORTED_OPERATION`                                                                  |
+| 25  | POST `{sqrt,[1,2]}`                                                                                                                          | 400 `INVALID_OPERAND_COUNT`                                                                  |
+| 26  | POST `{add,[1]}`                                                                                                                             | 400 `INVALID_OPERAND_COUNT`                                                                  |
+| 27  | POST `{add,[]}`                                                                                                                              | 400 `INVALID_OPERAND_COUNT`                                                                  |
+| 28  | POST `{add,["2",3]}`                                                                                                                         | 400 `VALIDATION_ERROR`, with a detail at path `operands.0`                                   |
+| 29  | POST `{add,[true,3]}` and `{add,[null,3]}`                                                                                                   | 400 `VALIDATION_ERROR`                                                                       |
+| 30  | POST raw `{"operation":"add","operands":[1e309,1]}`                                                                                          | 400 `VALIDATION_ERROR`                                                                       |
+| 31  | POST `{operands:[1,2]}` (operation missing)                                                                                                  | 400 `VALIDATION_ERROR`, path `operation`                                                     |
+| 32  | POST `{add,[1,2],extra:1}`                                                                                                                   | 400 `VALIDATION_ERROR`                                                                       |
+| 33  | POST `{operation:"modulo",operands:["x"]}`                                                                                                   | 400 `VALIDATION_ERROR` (the shape check runs before the lookup)                              |
+| 34  | POST `[1,2]`                                                                                                                                 | 400 `VALIDATION_ERROR`                                                                       |
+| 35  | POST raw `{"operation":` (malformed)                                                                                                         | 400 `MALFORMED_JSON`                                                                         |
+| 36  | POST raw `null`                                                                                                                              | 400 `MALFORMED_JSON`                                                                         |
+| 37  | POST with `Content-Type: text/plain`                                                                                                         | 415 `UNSUPPORTED_MEDIA_TYPE`                                                                 |
+| 38  | POST a body over 10 kB (`operation` = 11,000 × `"a"`)                                                                                        | 413 `PAYLOAD_TOO_LARGE`                                                                      |
+| 39  | `GET /api/v1/calculate`                                                                                                                      | 405 `METHOD_NOT_ALLOWED`, `Allow: POST`                                                      |
+| 40  | `POST /api/v1/health`                                                                                                                        | 405, `Allow: GET`                                                                            |
+| 41  | `GET /api/v1/nope` and `GET /api/v2/calculate`                                                                                               | 404 `NOT_FOUND`, JSON content type                                                           |
+| 42  | any API response                                                                                                                             | `Cache-Control: no-store`, and no `X-Powered-By` header                                      |
+| 43  | `vi.mocked(calculate).mockImplementationOnce(() => { throw new Error('boom: secret internals'); })`, with `console.error` spied and silenced | 500 `INTERNAL_ERROR`, message `An unexpected error occurred.` (see the row 43 details below) |
+| 44  | Static app (see below): `GET /` and `GET /some/client/route`                                                                                 | 200 HTML. `GET /api/v1/nope` still returns 404 JSON                                          |
 
 **Row 43 details.** In addition to the status, code and message, assert that:
 
@@ -2551,124 +2616,124 @@ Each row asserts:
 
 #### 7.3.2 Additional HTTP rows (`api.test.ts`)
 
-| # | Request | Expected |
-|---|---|---|
-| A1 | `request(app).post('/api/v1/calculate')` with no body and no Content-Type | 415 `UNSUPPORTED_MEDIA_TYPE` |
-| A2 | `raw('{"operation":"add","operands":[2,3]}', 'application/json; charset=utf-8')` | 200, result `5` |
-| A3 | `raw('x'.repeat(11_000), 'text/plain')` | 415, not 413 (the content-type check runs first) |
-| A4 | `calc({})` | 400 `VALIDATION_ERROR`. The paths include `operation` and `operands` |
-| A5 | `calc({ operation: '', operands: [1, 2] })` | 400 `VALIDATION_ERROR`, path `operation` |
-| A6 | `calc({ operation: 123, operands: [1, 2] })` | 400 `VALIDATION_ERROR`, path `operation` |
-| A7 | `calc({ operation: 'add', operands: '1,2' })` | 400 `VALIDATION_ERROR`, path `operands` |
-| A8 | `calc({ operation: 'add', operands: [[1], 2] })` and `[{}, 2]` | 400 `VALIDATION_ERROR`, path `operands.0` |
-| A9 | `calc({ operation: 'constructor', operands: [1, 2] })` and `'toString'` | 400 `UNSUPPORTED_OPERATION` |
-| A10 | `calc({ operation: 'modulo', operands: [1, 2] })` | The message is exactly the §3.7.2 `UNSUPPORTED_OPERATION` text for `modulo` |
-| A11 | `calc({ operation: 'percent', operands: [1, 2] })` | 400 `INVALID_OPERAND_COUNT`, message `Operation 'percent' expects 1 operand but received 2.` |
-| A12 | `raw('{"operation":"divide","operands":[1,-0]}')` | 422 `DIVISION_BY_ZERO` |
-| A13 | `add [1e308, 1e308]` and `subtract [-1e308, 1e308]` | 422 `NON_FINITE_RESULT` |
-| A14 | `divide [1e308, 1e-10]` | 422 `NON_FINITE_RESULT` |
-| A15 | `multiply [1e-200, 1e-200]` | 200, result `0` |
-| A16 | `percent [-50]` | 200, result `-0.5` |
-| A17 | `calc({ operation: 'add', operands: [Number('123456789012345678'), 0] })` (no lossy literal) | 200, result `123456789012346000` |
-| A18 | A successful `add [2, 3]` | `Object.keys(res.body)` equals `['operation','operands','result']`. `typeof result === 'number'`. Content-Type matches `/application\/json; charset=utf-8/` |
-| A19 | An error response (for example row 9) | `Object.keys(res.body)` equals `['error']`, and there is no `details` key |
-| A20 | `OPTIONS /api/v1/calculate` and `PUT /api/v1/operations` | 405, with `Allow: POST` and `Allow: GET` respectively |
-| A21 | `GET /api/v1/calculate` | The message is exactly `Method GET not allowed on /api/v1/calculate.` |
-| A22 | `HEAD /api/v1/health` | 200 |
-| A23 | `POST /api/v1/nope` and `GET /api` | 404 `NOT_FOUND`. The first message is exactly `Route POST /api/v1/nope not found.` |
-| A24 | 404 and 422 responses | Both carry `Cache-Control: no-store` |
-| A25 | Any API response | `x-content-type-options: nosniff` is present. The CSP does **not** contain `upgrade-insecure-requests` |
-| A26 | App **without** `STATIC_DIR`: `GET /` | 404 (the Express default). `index.html` is never served |
-| A27 | Static app: `GET /assets/app.js` | 200 with a JavaScript content type |
-| A28 | Static app: `HEAD /` | 200 |
-| A29 | Static app: `POST /some/client/route` | 404, not `index.html` |
-| A30 | Static app: `GET /api/v1/health` | 200 JSON |
-| A31 | `add [2,3]` posted to `/api/v1/calculate?x=1` | 200, result `5` |
-| A32 | `raw('{"operation":"add","operands":[2,3]}', 'application/json; charset=latin1')` | 415 `UNSUPPORTED_MEDIA_TYPE` (body-parser `charset.unsupported`) |
-| A33 | `request(app).post('/api/v1/calculate').set('Content-Type','application/json').set('Content-Encoding','bogus').send('{}')` | 415 `UNSUPPORTED_MEDIA_TYPE` (body-parser `encoding.unsupported`) |
+| #   | Request                                                                                                                    | Expected                                                                                                                                                    |
+| --- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | `request(app).post('/api/v1/calculate')` with no body and no Content-Type                                                  | 415 `UNSUPPORTED_MEDIA_TYPE`                                                                                                                                |
+| A2  | `raw('{"operation":"add","operands":[2,3]}', 'application/json; charset=utf-8')`                                           | 200, result `5`                                                                                                                                             |
+| A3  | `raw('x'.repeat(11_000), 'text/plain')`                                                                                    | 415, not 413 (the content-type check runs first)                                                                                                            |
+| A4  | `calc({})`                                                                                                                 | 400 `VALIDATION_ERROR`. The paths include `operation` and `operands`                                                                                        |
+| A5  | `calc({ operation: '', operands: [1, 2] })`                                                                                | 400 `VALIDATION_ERROR`, path `operation`                                                                                                                    |
+| A6  | `calc({ operation: 123, operands: [1, 2] })`                                                                               | 400 `VALIDATION_ERROR`, path `operation`                                                                                                                    |
+| A7  | `calc({ operation: 'add', operands: '1,2' })`                                                                              | 400 `VALIDATION_ERROR`, path `operands`                                                                                                                     |
+| A8  | `calc({ operation: 'add', operands: [[1], 2] })` and `[{}, 2]`                                                             | 400 `VALIDATION_ERROR`, path `operands.0`                                                                                                                   |
+| A9  | `calc({ operation: 'constructor', operands: [1, 2] })` and `'toString'`                                                    | 400 `UNSUPPORTED_OPERATION`                                                                                                                                 |
+| A10 | `calc({ operation: 'modulo', operands: [1, 2] })`                                                                          | The message is exactly the §3.7.2 `UNSUPPORTED_OPERATION` text for `modulo`                                                                                 |
+| A11 | `calc({ operation: 'percent', operands: [1, 2] })`                                                                         | 400 `INVALID_OPERAND_COUNT`, message `Operation 'percent' expects 1 operand but received 2.`                                                                |
+| A12 | `raw('{"operation":"divide","operands":[1,-0]}')`                                                                          | 422 `DIVISION_BY_ZERO`                                                                                                                                      |
+| A13 | `add [1e308, 1e308]` and `subtract [-1e308, 1e308]`                                                                        | 422 `NON_FINITE_RESULT`                                                                                                                                     |
+| A14 | `divide [1e308, 1e-10]`                                                                                                    | 422 `NON_FINITE_RESULT`                                                                                                                                     |
+| A15 | `multiply [1e-200, 1e-200]`                                                                                                | 200, result `0`                                                                                                                                             |
+| A16 | `percent [-50]`                                                                                                            | 200, result `-0.5`                                                                                                                                          |
+| A17 | `calc({ operation: 'add', operands: [Number('123456789012345678'), 0] })` (no lossy literal)                               | 200, result `123456789012346000`                                                                                                                            |
+| A18 | A successful `add [2, 3]`                                                                                                  | `Object.keys(res.body)` equals `['operation','operands','result']`. `typeof result === 'number'`. Content-Type matches `/application\/json; charset=utf-8/` |
+| A19 | An error response (for example row 9)                                                                                      | `Object.keys(res.body)` equals `['error']`, and there is no `details` key                                                                                   |
+| A20 | `OPTIONS /api/v1/calculate` and `PUT /api/v1/operations`                                                                   | 405, with `Allow: POST` and `Allow: GET` respectively                                                                                                       |
+| A21 | `GET /api/v1/calculate`                                                                                                    | The message is exactly `Method GET not allowed on /api/v1/calculate.`                                                                                       |
+| A22 | `HEAD /api/v1/health`                                                                                                      | 200                                                                                                                                                         |
+| A23 | `POST /api/v1/nope` and `GET /api`                                                                                         | 404 `NOT_FOUND`. The first message is exactly `Route POST /api/v1/nope not found.`                                                                          |
+| A24 | 404 and 422 responses                                                                                                      | Both carry `Cache-Control: no-store`                                                                                                                        |
+| A25 | Any API response                                                                                                           | `x-content-type-options: nosniff` is present. The CSP does **not** contain `upgrade-insecure-requests`                                                      |
+| A26 | App **without** `STATIC_DIR`: `GET /`                                                                                      | 404 (the Express default). `index.html` is never served                                                                                                     |
+| A27 | Static app: `GET /assets/app.js`                                                                                           | 200 with a JavaScript content type                                                                                                                          |
+| A28 | Static app: `HEAD /`                                                                                                       | 200                                                                                                                                                         |
+| A29 | Static app: `POST /some/client/route`                                                                                      | 404, not `index.html`                                                                                                                                       |
+| A30 | Static app: `GET /api/v1/health`                                                                                           | 200 JSON                                                                                                                                                    |
+| A31 | `add [2,3]` posted to `/api/v1/calculate?x=1`                                                                              | 200, result `5`                                                                                                                                             |
+| A32 | `raw('{"operation":"add","operands":[2,3]}', 'application/json; charset=latin1')`                                          | 415 `UNSUPPORTED_MEDIA_TYPE` (body-parser `charset.unsupported`)                                                                                            |
+| A33 | `request(app).post('/api/v1/calculate').set('Content-Type','application/json').set('Content-Encoding','bogus').send('{}')` | 415 `UNSUPPORTED_MEDIA_TYPE` (body-parser `encoding.unsupported`)                                                                                           |
 
 #### 7.3.3 Domain (`backend/test/calculator.test.ts`)
 
-| # | Call | Expected |
-|---|---|---|
-| D1 | `finalizeResult(0.30000000000000004)` | `0.3` |
-| D2 | `finalizeResult(-0)` | `Object.is(r, 0)` |
-| D3 | `finalizeResult(Infinity)` | 422 `NON_FINITE_RESULT` |
-| D4 | `finalizeResult(-Infinity)` | 422 `NON_FINITE_RESULT` |
-| D5 | `finalizeResult(NaN)` | 422 `NON_FINITE_RESULT` |
-| D6 | `finalizeResult(Number.MAX_VALUE)` | `Number.MAX_VALUE` |
-| D7 | `finalizeResult(-Number.MAX_VALUE)` | `-Number.MAX_VALUE` |
-| D8 | `finalizeResult(Number('123456789012345678'))` (no lossy literal) | `123456789012346000` |
-| D9 | `finalizeResult(Number.MIN_VALUE)` | `5e-324` |
-| D10 | `finalizeResult(42)` and `finalizeResult(1e21)` | unchanged |
-| D11 | `calculate('add', [2, 3])` | `5` |
-| D12 | `calculate('add', [0.1, 0.2])` | `0.3` |
-| D13 | `calculate('add', [1e308, 1e308])` | 422 `NON_FINITE_RESULT` |
-| D14 | `calculate('subtract', [0.3, 0.1])` | `0.2` |
-| D15 | `calculate('subtract', [5, 8])` | `-3` |
-| D16 | `calculate('subtract', [-1e308, 1e308])` | 422 `NON_FINITE_RESULT` |
-| D17 | `calculate('multiply', [0.1, 3])` | `0.3` |
-| D18 | `calculate('multiply', [-1, 0])` | `Object.is(r, 0)` |
-| D19 | `calculate('multiply', [1e-200, 1e-200])` | `0` |
-| D20 | `calculate('multiply', [1e308, 10])` | 422 `NON_FINITE_RESULT` |
-| D21 | `calculate('divide', [10, 4])` | `2.5` |
-| D22 | `calculate('divide', [1, 3])` | `0.333333333333333` |
-| D23 | `calculate('divide', [2, 3])` | `0.666666666666667` |
-| D24 | `calculate('divide', [-6, 3])` | `-2` |
-| D25 | `calculate('divide', [5, 0])` | 422 `DIVISION_BY_ZERO` |
-| D26 | `calculate('divide', [5, -0])` | 422 `DIVISION_BY_ZERO` |
-| D27 | `calculate('divide', [0, 0])` | 422 `DIVISION_BY_ZERO` |
-| D28 | `calculate('divide', [1e308, 1e-10])` | 422 `NON_FINITE_RESULT` |
-| D29 | `calculate('power', [2, 10])` | `1024` |
-| D30 | `calculate('power', [2, -1])` | `0.5` |
-| D31 | `calculate('power', [0, 0])` | `1` |
-| D32 | `calculate('power', [-2, 3])` | `-8` |
-| D33 | `calculate('power', [2, 0.5])` | `1.4142135623731` |
-| D34 | `calculate('power', [0, -1])` | 422 `NON_FINITE_RESULT` |
-| D35 | `calculate('power', [10, 400])` | 422 `NON_FINITE_RESULT` |
-| D36 | `calculate('power', [-8, 0.5])` | 422 `NON_FINITE_RESULT` |
-| D37 | `calculate('sqrt', [9])` | `3` |
-| D38 | `calculate('sqrt', [2])` | `1.4142135623731` |
-| D39 | `calculate('sqrt', [0])` and `[-0]` | both `Object.is(r, 0)` |
-| D40 | `calculate('sqrt', [-4])` and `[-1e-300]` | 422 `NEGATIVE_SQRT` |
-| D41 | `calculate('percent', …)` with `[50]`, `[-50]`, `[0.1]`, `[0]` | `0.5`, `-0.5`, `0.001`, `0` |
-| D42 | `calculate('sqrt', [1, 2])` | 400 `INVALID_OPERAND_COUNT`, message exactly `Operation 'sqrt' expects 1 operand but received 2.` |
-| D43 | `calculate('add', [1])` and `calculate('add', [])` | 400 `INVALID_OPERAND_COUNT`. The first message is exactly `Operation 'add' expects 2 operands but received 1.` |
-| D44 | `calculate('add', Object.freeze([1, 2]))` | `3`, with no mutation error |
-| D45 | `isOperation` for each of the 7 names | `true` |
-| D46 | `isOperation` for `'ADD'`, `'modulo'`, `''`, `'toString'`, `'constructor'`, `'__proto__'`, `'hasOwnProperty'` | `false` |
-| D47 | `listOperations()` | Deep-equals the §3.3.2 array: order, symbols (including `'−'`), arity and descriptions. Each entry's `Object.keys` is `['name','symbol','arity','description']`. In particular, `listOperations().map(o => o.name)` equals `['add','subtract','multiply','divide','power','sqrt','percent']` |
-| D48 | Domain error messages | The `DIVISION_BY_ZERO`, `NEGATIVE_SQRT` and `NON_FINITE_RESULT` errors carry the exact §3.7.2 messages, and `name === 'AppError'` |
+| #   | Call                                                                                                          | Expected                                                                                                                                                                                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | `finalizeResult(0.30000000000000004)`                                                                         | `0.3`                                                                                                                                                                                                                                                                                        |
+| D2  | `finalizeResult(-0)`                                                                                          | `Object.is(r, 0)`                                                                                                                                                                                                                                                                            |
+| D3  | `finalizeResult(Infinity)`                                                                                    | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D4  | `finalizeResult(-Infinity)`                                                                                   | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D5  | `finalizeResult(NaN)`                                                                                         | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D6  | `finalizeResult(Number.MAX_VALUE)`                                                                            | `Number.MAX_VALUE`                                                                                                                                                                                                                                                                           |
+| D7  | `finalizeResult(-Number.MAX_VALUE)`                                                                           | `-Number.MAX_VALUE`                                                                                                                                                                                                                                                                          |
+| D8  | `finalizeResult(Number('123456789012345678'))` (no lossy literal)                                             | `123456789012346000`                                                                                                                                                                                                                                                                         |
+| D9  | `finalizeResult(Number.MIN_VALUE)`                                                                            | `5e-324`                                                                                                                                                                                                                                                                                     |
+| D10 | `finalizeResult(42)` and `finalizeResult(1e21)`                                                               | unchanged                                                                                                                                                                                                                                                                                    |
+| D11 | `calculate('add', [2, 3])`                                                                                    | `5`                                                                                                                                                                                                                                                                                          |
+| D12 | `calculate('add', [0.1, 0.2])`                                                                                | `0.3`                                                                                                                                                                                                                                                                                        |
+| D13 | `calculate('add', [1e308, 1e308])`                                                                            | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D14 | `calculate('subtract', [0.3, 0.1])`                                                                           | `0.2`                                                                                                                                                                                                                                                                                        |
+| D15 | `calculate('subtract', [5, 8])`                                                                               | `-3`                                                                                                                                                                                                                                                                                         |
+| D16 | `calculate('subtract', [-1e308, 1e308])`                                                                      | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D17 | `calculate('multiply', [0.1, 3])`                                                                             | `0.3`                                                                                                                                                                                                                                                                                        |
+| D18 | `calculate('multiply', [-1, 0])`                                                                              | `Object.is(r, 0)`                                                                                                                                                                                                                                                                            |
+| D19 | `calculate('multiply', [1e-200, 1e-200])`                                                                     | `0`                                                                                                                                                                                                                                                                                          |
+| D20 | `calculate('multiply', [1e308, 10])`                                                                          | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D21 | `calculate('divide', [10, 4])`                                                                                | `2.5`                                                                                                                                                                                                                                                                                        |
+| D22 | `calculate('divide', [1, 3])`                                                                                 | `0.333333333333333`                                                                                                                                                                                                                                                                          |
+| D23 | `calculate('divide', [2, 3])`                                                                                 | `0.666666666666667`                                                                                                                                                                                                                                                                          |
+| D24 | `calculate('divide', [-6, 3])`                                                                                | `-2`                                                                                                                                                                                                                                                                                         |
+| D25 | `calculate('divide', [5, 0])`                                                                                 | 422 `DIVISION_BY_ZERO`                                                                                                                                                                                                                                                                       |
+| D26 | `calculate('divide', [5, -0])`                                                                                | 422 `DIVISION_BY_ZERO`                                                                                                                                                                                                                                                                       |
+| D27 | `calculate('divide', [0, 0])`                                                                                 | 422 `DIVISION_BY_ZERO`                                                                                                                                                                                                                                                                       |
+| D28 | `calculate('divide', [1e308, 1e-10])`                                                                         | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D29 | `calculate('power', [2, 10])`                                                                                 | `1024`                                                                                                                                                                                                                                                                                       |
+| D30 | `calculate('power', [2, -1])`                                                                                 | `0.5`                                                                                                                                                                                                                                                                                        |
+| D31 | `calculate('power', [0, 0])`                                                                                  | `1`                                                                                                                                                                                                                                                                                          |
+| D32 | `calculate('power', [-2, 3])`                                                                                 | `-8`                                                                                                                                                                                                                                                                                         |
+| D33 | `calculate('power', [2, 0.5])`                                                                                | `1.4142135623731`                                                                                                                                                                                                                                                                            |
+| D34 | `calculate('power', [0, -1])`                                                                                 | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D35 | `calculate('power', [10, 400])`                                                                               | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D36 | `calculate('power', [-8, 0.5])`                                                                               | 422 `NON_FINITE_RESULT`                                                                                                                                                                                                                                                                      |
+| D37 | `calculate('sqrt', [9])`                                                                                      | `3`                                                                                                                                                                                                                                                                                          |
+| D38 | `calculate('sqrt', [2])`                                                                                      | `1.4142135623731`                                                                                                                                                                                                                                                                            |
+| D39 | `calculate('sqrt', [0])` and `[-0]`                                                                           | both `Object.is(r, 0)`                                                                                                                                                                                                                                                                       |
+| D40 | `calculate('sqrt', [-4])` and `[-1e-300]`                                                                     | 422 `NEGATIVE_SQRT`                                                                                                                                                                                                                                                                          |
+| D41 | `calculate('percent', …)` with `[50]`, `[-50]`, `[0.1]`, `[0]`                                                | `0.5`, `-0.5`, `0.001`, `0`                                                                                                                                                                                                                                                                  |
+| D42 | `calculate('sqrt', [1, 2])`                                                                                   | 400 `INVALID_OPERAND_COUNT`, message exactly `Operation 'sqrt' expects 1 operand but received 2.`                                                                                                                                                                                            |
+| D43 | `calculate('add', [1])` and `calculate('add', [])`                                                            | 400 `INVALID_OPERAND_COUNT`. The first message is exactly `Operation 'add' expects 2 operands but received 1.`                                                                                                                                                                               |
+| D44 | `calculate('add', Object.freeze([1, 2]))`                                                                     | `3`, with no mutation error                                                                                                                                                                                                                                                                  |
+| D45 | `isOperation` for each of the 7 names                                                                         | `true`                                                                                                                                                                                                                                                                                       |
+| D46 | `isOperation` for `'ADD'`, `'modulo'`, `''`, `'toString'`, `'constructor'`, `'__proto__'`, `'hasOwnProperty'` | `false`                                                                                                                                                                                                                                                                                      |
+| D47 | `listOperations()`                                                                                            | Deep-equals the §3.3.2 array: order, symbols (including `'−'`), arity and descriptions. Each entry's `Object.keys` is `['name','symbol','arity','description']`. In particular, `listOperations().map(o => o.name)` equals `['add','subtract','multiply','divide','power','sqrt','percent']` |
+| D48 | Domain error messages                                                                                         | The `DIVISION_BY_ZERO`, `NEGATIVE_SQRT` and `NON_FINITE_RESULT` errors carry the exact §3.7.2 messages, and `name === 'AppError'`                                                                                                                                                            |
 
 #### 7.3.4 Validation, errors and config
 
 These rows go in `validation.test.ts`, `errors.test.ts` and `config.test.ts`.
 
-| # | Case | Expected |
-|---|---|---|
-| V1 | `{operation:'add', operands:[1,2]}` | Succeeds, and `data` equals the input |
-| V2 | `{operation:'add', operands:['2',3]}` | Fails, path `operands.0` |
-| V3 | Operands `[Infinity,1]`, and `JSON.parse('{"operation":"add","operands":[1e309,1]}')` | Fails, path `operands.0` |
-| V4 | Operands `[NaN,1]` | Fails, path `operands.0` |
-| V5 | Operands `[true,1]`, `[null,1]`, `[[1],1]`, `[{},1]` | Each fails at `operands.0` |
-| V6 | `{operation:'add', operands:[1,2], extra:1}` | Fails, and one issue has path `(root)` |
-| V7 | `{operation:'', operands:[1,2]}` and `{operation:123, operands:[1,2]}` | Fails at `operation` |
-| V8 | `{operation:'add'}` and `{operation:'add', operands:'1,2'}` | Fails at `operands` |
-| V9 | `[1,2]`, `null`, `42`, `undefined` | Fails, path `(root)` |
-| V10 | `toValidationIssues` on the result for `{}` | Two issues, with paths `operation` and `operands`, each with a non-empty string `message` |
-| E1 | `new AppError(422,'DIVISION_BY_ZERO','m')` | `instanceof Error`, `name === 'AppError'`, `status`, `code` and `message` set, `details` undefined |
-| E2 | `MESSAGES.UNSUPPORTED_OPERATION('modulo', ['add','subtract','multiply','divide','power','sqrt','percent'])` (a literal array, so this test does not depend on `calculator.ts`; D47 checks that `listOperations()` returns the same names) | Exactly `Unsupported operation 'modulo'. Supported operations: add, subtract, multiply, divide, power, sqrt, percent.` |
-| E3 | `MESSAGES.INVALID_OPERAND_COUNT` with arity 1 and 2 received, then arity 2 and 1 received | Singular "1 operand" and plural "2 operands" |
-| E4 | `MESSAGES.NOT_FOUND('GET','/api/v1/nope')` and `MESSAGES.METHOD_NOT_ALLOWED('GET','/api/v1/calculate')` | `Route GET /api/v1/nope not found.` and `Method GET not allowed on /api/v1/calculate.` |
-| C1 | `loadConfig({})` | `{ port: 3000, nodeEnv: 'development', staticDir: undefined }` |
-| C2 | `loadConfig({ PORT: '8081', NODE_ENV: 'production' })` | port `8081`, nodeEnv `'production'` |
-| C3 | `PORT: ''` | port `3000` |
-| C4 | `PORT` set to `'abc'`, `'0'`, `'70000'` or `'3000.5'` | Throws `/Invalid PORT/` |
-| C5 | `NODE_ENV: 'staging'` | Throws `/Invalid NODE_ENV/` |
-| C6 | `NODE_ENV: 'test'` | nodeEnv `'test'` |
-| C7 | `STATIC_DIR: ''` | `staticDir` is undefined |
-| C8 | `STATIC_DIR: 'relative/dir'` | The result is absolute and ends with `path.join('relative','dir')` |
-| C9 | `STATIC_DIR: '/abs/dir'` | `path.resolve('/abs/dir')` |
+| #   | Case                                                                                                                                                                                                                                      | Expected                                                                                                               |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| V1  | `{operation:'add', operands:[1,2]}`                                                                                                                                                                                                       | Succeeds, and `data` equals the input                                                                                  |
+| V2  | `{operation:'add', operands:['2',3]}`                                                                                                                                                                                                     | Fails, path `operands.0`                                                                                               |
+| V3  | Operands `[Infinity,1]`, and `JSON.parse('{"operation":"add","operands":[1e309,1]}')`                                                                                                                                                     | Fails, path `operands.0`                                                                                               |
+| V4  | Operands `[NaN,1]`                                                                                                                                                                                                                        | Fails, path `operands.0`                                                                                               |
+| V5  | Operands `[true,1]`, `[null,1]`, `[[1],1]`, `[{},1]`                                                                                                                                                                                      | Each fails at `operands.0`                                                                                             |
+| V6  | `{operation:'add', operands:[1,2], extra:1}`                                                                                                                                                                                              | Fails, and one issue has path `(root)`                                                                                 |
+| V7  | `{operation:'', operands:[1,2]}` and `{operation:123, operands:[1,2]}`                                                                                                                                                                    | Fails at `operation`                                                                                                   |
+| V8  | `{operation:'add'}` and `{operation:'add', operands:'1,2'}`                                                                                                                                                                               | Fails at `operands`                                                                                                    |
+| V9  | `[1,2]`, `null`, `42`, `undefined`                                                                                                                                                                                                        | Fails, path `(root)`                                                                                                   |
+| V10 | `toValidationIssues` on the result for `{}`                                                                                                                                                                                               | Two issues, with paths `operation` and `operands`, each with a non-empty string `message`                              |
+| E1  | `new AppError(422,'DIVISION_BY_ZERO','m')`                                                                                                                                                                                                | `instanceof Error`, `name === 'AppError'`, `status`, `code` and `message` set, `details` undefined                     |
+| E2  | `MESSAGES.UNSUPPORTED_OPERATION('modulo', ['add','subtract','multiply','divide','power','sqrt','percent'])` (a literal array, so this test does not depend on `calculator.ts`; D47 checks that `listOperations()` returns the same names) | Exactly `Unsupported operation 'modulo'. Supported operations: add, subtract, multiply, divide, power, sqrt, percent.` |
+| E3  | `MESSAGES.INVALID_OPERAND_COUNT` with arity 1 and 2 received, then arity 2 and 1 received                                                                                                                                                 | Singular "1 operand" and plural "2 operands"                                                                           |
+| E4  | `MESSAGES.NOT_FOUND('GET','/api/v1/nope')` and `MESSAGES.METHOD_NOT_ALLOWED('GET','/api/v1/calculate')`                                                                                                                                   | `Route GET /api/v1/nope not found.` and `Method GET not allowed on /api/v1/calculate.`                                 |
+| C1  | `loadConfig({})`                                                                                                                                                                                                                          | `{ port: 3000, nodeEnv: 'development', staticDir: undefined }`                                                         |
+| C2  | `loadConfig({ PORT: '8081', NODE_ENV: 'production' })`                                                                                                                                                                                    | port `8081`, nodeEnv `'production'`                                                                                    |
+| C3  | `PORT: ''`                                                                                                                                                                                                                                | port `3000`                                                                                                            |
+| C4  | `PORT` set to `'abc'`, `'0'`, `'70000'` or `'3000.5'`                                                                                                                                                                                     | Throws `/Invalid PORT/`                                                                                                |
+| C5  | `NODE_ENV: 'staging'`                                                                                                                                                                                                                     | Throws `/Invalid NODE_ENV/`                                                                                            |
+| C6  | `NODE_ENV: 'test'`                                                                                                                                                                                                                        | nodeEnv `'test'`                                                                                                       |
+| C7  | `STATIC_DIR: ''`                                                                                                                                                                                                                          | `staticDir` is undefined                                                                                               |
+| C8  | `STATIC_DIR: 'relative/dir'`                                                                                                                                                                                                              | The result is absolute and ends with `path.join('relative','dir')`                                                     |
+| C9  | `STATIC_DIR: '/abs/dir'`                                                                                                                                                                                                                  | `path.resolve('/abs/dir')`                                                                                             |
 
 #### 7.3.5 Middleware (`backend/test/middleware.test.ts`)
 
@@ -2683,14 +2748,14 @@ const next = vi.fn();
 const req = {} as Request;
 ```
 
-| # | Case | Expected |
-|---|---|---|
-| M1 | `requestLogFormat('development' / 'production' / 'test')` | `'dev'` / `'combined'` / `null` |
-| M2 | `errorHandler(err, req, res, next)` with a stub whose `headersSent` is `true` | `next` is called with `err`, and `status` is not called |
-| M3 | `errorHandler('boom', req, res, next)` with `console.error` spied and silenced | `status` is called with `500`. `json` is called with `{ error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred.' } }`. The spy was called once |
-| M4 | `createApp({ port: 3000, nodeEnv: 'test', staticDir: <empty temp dir> })` | Throws `/does not contain index.html/` |
-| M5 | `createApp({ port: 3000, nodeEnv: 'production' })` | Returns an app without throwing. Make no request |
-| M6 | `errorHandler({ type: 'request.aborted' }, …)` and `errorHandler({ type: 'request.size.invalid' }, …)` | `status` is called with `400`, and `json` with code `MALFORMED_JSON` |
+| #   | Case                                                                                                   | Expected                                                                                                                                                        |
+| --- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M1  | `requestLogFormat('development' / 'production' / 'test')`                                              | `'dev'` / `'combined'` / `null`                                                                                                                                 |
+| M2  | `errorHandler(err, req, res, next)` with a stub whose `headersSent` is `true`                          | `next` is called with `err`, and `status` is not called                                                                                                         |
+| M3  | `errorHandler('boom', req, res, next)` with `console.error` spied and silenced                         | `status` is called with `500`. `json` is called with `{ error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred.' } }`. The spy was called once |
+| M4  | `createApp({ port: 3000, nodeEnv: 'test', staticDir: <empty temp dir> })`                              | Throws `/does not contain index.html/`                                                                                                                          |
+| M5  | `createApp({ port: 3000, nodeEnv: 'production' })`                                                     | Returns an app without throwing. Make no request                                                                                                                |
+| M6  | `errorHandler({ type: 'request.aborted' }, …)` and `errorHandler({ type: 'request.size.invalid' }, …)` | `status` is called with `400`, and `json` with code `MALFORMED_JSON`                                                                                            |
 
 ### 7.4 Frontend tests
 
@@ -2710,58 +2775,58 @@ The helper returns `{ state, requests }`.
 
 `defaultFake` is the **only** place in the frontend that does arithmetic: add, subtract, multiply, divide, power, `Math.sqrt` and `/100`.
 
-| # | Input | Expected |
-|---|---|---|
-| R1 | `initialState` | Equals the §5.4.3 object |
-| R2 | `5` | display `'5'` |
-| R3 | `0 0` | display `'0'` |
-| R4 | `0 7` | display `'7'` |
-| R5 | `1 2 3` | display `'123'` |
-| R6 | `.` | display `'0.'` |
-| R7 | `1 . . 5` | display `'1.5'`. The second `.` returns the same reference |
-| R8 | `0 . 0 5` | display `'0.05'` |
-| R9 | `9` × 16 | 15 nines. The 16th press returns the same reference |
-| R10 | `1 .` then `2` × 15 | display `'1.' + '2'.repeat(14)` |
-| R11 | 15 digits then `.` | Ignored (same reference) |
-| R12 | `2 add` | accumulator 2, pending `add`, awaitingOperand true, overwrite true, display `'2'`, no request |
-| R13 | `2 add multiply` | pending `multiply`, no request |
-| R14 | `2 add 3` | display `'3'`, awaitingOperand false, overwrite false, accumulator 2 |
-| R15 | `2 add .` | display `'0.'` |
-| R16 | `getComputeRequest` after `2 add 3`, for `multiply` | `{ operation:'add', operands:[2,3], continuation:{kind:'chain', next:'multiply'} }` |
-| R17 | `computeStart`, then `computeSuccess(5)` with chain(multiply) | display `'5'`, accumulator 5, pending `multiply`, awaitingOperand true, loading false, inFlight null |
-| R18 | `2 add 3 multiply 4 equals` | display `'20'`. Requests `[add [2,3], multiply [5,4]]` |
-| R19 | `5 equals` | `getComputeRequest` returns `null`. The state is unchanged |
-| R20 | `2 add 3 equals` | Request `add [2,3]` with `equals`. Display `'5'`, accumulator null, pending null, overwrite true, awaitingOperand false |
-| R21 | `…equals` (giving 5), then `7` | display `'7'` |
-| R22 | `…equals`, then `.` | display `'0.'` |
-| R23 | `…equals` (giving 5), then `add 1 equals` | The last request is `add [5,1]`. Display `'6'` |
-| R24 | `5 multiply equals` | Request `multiply [5,5]`. Display `'25'` |
-| R25 | `2 add 3 equals equals` | Exactly one request |
-| R26 | `9 sqrt` | Request `sqrt [9]` with `unary`. Display `'3'`, overwrite true, awaitingOperand false |
-| R27 | `2 add 9 sqrt equals` | Requests `[sqrt [9], add [2,3]]`. Display `'5'` |
-| R28 | `2 add sqrt` | Request `sqrt [2]`. pending is still `add`, accumulator 2 |
-| R29 | `5 0 percent` | Request `percent [50]`. Display `'0.5'` |
-| R30 | `9 sqrt 4` | display `'4'` |
-| R31 | `5 . add 1 equals` | Requests `[add [5,1]]` |
-| R32 | `3 subtract 5 equals multiply 3 equals` | Display `'-2'`, then `'-6'`. The second request is `multiply [-2,3]` |
-| R33 | `0 subtract 4 equals sqrt` | Request `sqrt [-4]` (no client pre-validation) |
-| R34 | `computeFailure` (matching ID, `'Cannot divide by zero'`) | `{ ...initialState, error: 'Cannot divide by zero' }` |
-| R35 | Error state, then `add`, `sqrt` or `equals` | `getComputeRequest` returns `null` for each. The `operator` action returns the same reference |
-| R36 | Error state, then `7` | `{ ...initialState, display: '7' }` |
-| R37 | Error state, then `.` | display `'0.'`, error null |
-| R38 | Error state, then `clear` | `toEqual(initialState)` |
-| R39 | Loading, then a `digit`, `decimal` or `operator` action | Same reference each time |
-| R40 | Loading, then `getComputeRequest` for `equals`, `add` or `sqrt` | `null` |
-| R41 | `computeSuccess` with a mismatched `requestId` | Same reference, still loading |
-| R42 | `clear` during loading, then `computeSuccess` with the old ID | `initialState`, then the same reference |
-| R43 | `computeFailure` with a stale ID | Same reference |
-| R44 | Success with `1e21` / `1e-7` / `0.3` | display `'1e+21'` / `'1e-7'` / `'0.3'` |
-| R45 | Operator path 3 (pending, not awaiting) dispatched directly | Same reference |
-| S1 | `selectExpression` with nothing pending | `''` |
-| S2 | `selectExpression` after `2 add` / after a `-2` result then `multiply` / after `2 power` | `'2 +'` / `'-2 ×'` / `'2 ^'` |
-| S3 | `displaySize` | `'0'` → lg. 9 characters → lg. 10 → md. 13 → md. 14 → sm. `'-1.7976931348623157e+308'` → sm |
-| S4 | `countDigits` | `'12.5'` → 3. `'-0.05'` → 3. `'1e+21'` → 3 |
-| S5 | `keyToAction` | `'7'` → digit, `'decimal'` → decimal, `'add'` → operator, `'clear'` → clear. `'equals'`, `'sqrt'` and `'percent'` → `null` |
+| #   | Input                                                                                    | Expected                                                                                                                   |
+| --- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| R1  | `initialState`                                                                           | Equals the §5.4.3 object                                                                                                   |
+| R2  | `5`                                                                                      | display `'5'`                                                                                                              |
+| R3  | `0 0`                                                                                    | display `'0'`                                                                                                              |
+| R4  | `0 7`                                                                                    | display `'7'`                                                                                                              |
+| R5  | `1 2 3`                                                                                  | display `'123'`                                                                                                            |
+| R6  | `.`                                                                                      | display `'0.'`                                                                                                             |
+| R7  | `1 . . 5`                                                                                | display `'1.5'`. The second `.` returns the same reference                                                                 |
+| R8  | `0 . 0 5`                                                                                | display `'0.05'`                                                                                                           |
+| R9  | `9` × 16                                                                                 | 15 nines. The 16th press returns the same reference                                                                        |
+| R10 | `1 .` then `2` × 15                                                                      | display `'1.' + '2'.repeat(14)`                                                                                            |
+| R11 | 15 digits then `.`                                                                       | Ignored (same reference)                                                                                                   |
+| R12 | `2 add`                                                                                  | accumulator 2, pending `add`, awaitingOperand true, overwrite true, display `'2'`, no request                              |
+| R13 | `2 add multiply`                                                                         | pending `multiply`, no request                                                                                             |
+| R14 | `2 add 3`                                                                                | display `'3'`, awaitingOperand false, overwrite false, accumulator 2                                                       |
+| R15 | `2 add .`                                                                                | display `'0.'`                                                                                                             |
+| R16 | `getComputeRequest` after `2 add 3`, for `multiply`                                      | `{ operation:'add', operands:[2,3], continuation:{kind:'chain', next:'multiply'} }`                                        |
+| R17 | `computeStart`, then `computeSuccess(5)` with chain(multiply)                            | display `'5'`, accumulator 5, pending `multiply`, awaitingOperand true, loading false, inFlight null                       |
+| R18 | `2 add 3 multiply 4 equals`                                                              | display `'20'`. Requests `[add [2,3], multiply [5,4]]`                                                                     |
+| R19 | `5 equals`                                                                               | `getComputeRequest` returns `null`. The state is unchanged                                                                 |
+| R20 | `2 add 3 equals`                                                                         | Request `add [2,3]` with `equals`. Display `'5'`, accumulator null, pending null, overwrite true, awaitingOperand false    |
+| R21 | `…equals` (giving 5), then `7`                                                           | display `'7'`                                                                                                              |
+| R22 | `…equals`, then `.`                                                                      | display `'0.'`                                                                                                             |
+| R23 | `…equals` (giving 5), then `add 1 equals`                                                | The last request is `add [5,1]`. Display `'6'`                                                                             |
+| R24 | `5 multiply equals`                                                                      | Request `multiply [5,5]`. Display `'25'`                                                                                   |
+| R25 | `2 add 3 equals equals`                                                                  | Exactly one request                                                                                                        |
+| R26 | `9 sqrt`                                                                                 | Request `sqrt [9]` with `unary`. Display `'3'`, overwrite true, awaitingOperand false                                      |
+| R27 | `2 add 9 sqrt equals`                                                                    | Requests `[sqrt [9], add [2,3]]`. Display `'5'`                                                                            |
+| R28 | `2 add sqrt`                                                                             | Request `sqrt [2]`. pending is still `add`, accumulator 2                                                                  |
+| R29 | `5 0 percent`                                                                            | Request `percent [50]`. Display `'0.5'`                                                                                    |
+| R30 | `9 sqrt 4`                                                                               | display `'4'`                                                                                                              |
+| R31 | `5 . add 1 equals`                                                                       | Requests `[add [5,1]]`                                                                                                     |
+| R32 | `3 subtract 5 equals multiply 3 equals`                                                  | Display `'-2'`, then `'-6'`. The second request is `multiply [-2,3]`                                                       |
+| R33 | `0 subtract 4 equals sqrt`                                                               | Request `sqrt [-4]` (no client pre-validation)                                                                             |
+| R34 | `computeFailure` (matching ID, `'Cannot divide by zero'`)                                | `{ ...initialState, error: 'Cannot divide by zero' }`                                                                      |
+| R35 | Error state, then `add`, `sqrt` or `equals`                                              | `getComputeRequest` returns `null` for each. The `operator` action returns the same reference                              |
+| R36 | Error state, then `7`                                                                    | `{ ...initialState, display: '7' }`                                                                                        |
+| R37 | Error state, then `.`                                                                    | display `'0.'`, error null                                                                                                 |
+| R38 | Error state, then `clear`                                                                | `toEqual(initialState)`                                                                                                    |
+| R39 | Loading, then a `digit`, `decimal` or `operator` action                                  | Same reference each time                                                                                                   |
+| R40 | Loading, then `getComputeRequest` for `equals`, `add` or `sqrt`                          | `null`                                                                                                                     |
+| R41 | `computeSuccess` with a mismatched `requestId`                                           | Same reference, still loading                                                                                              |
+| R42 | `clear` during loading, then `computeSuccess` with the old ID                            | `initialState`, then the same reference                                                                                    |
+| R43 | `computeFailure` with a stale ID                                                         | Same reference                                                                                                             |
+| R44 | Success with `1e21` / `1e-7` / `0.3`                                                     | display `'1e+21'` / `'1e-7'` / `'0.3'`                                                                                     |
+| R45 | Operator path 3 (pending, not awaiting) dispatched directly                              | Same reference                                                                                                             |
+| S1  | `selectExpression` with nothing pending                                                  | `''`                                                                                                                       |
+| S2  | `selectExpression` after `2 add` / after a `-2` result then `multiply` / after `2 power` | `'2 +'` / `'-2 ×'` / `'2 ^'`                                                                                               |
+| S3  | `displaySize`                                                                            | `'0'` → lg. 9 characters → lg. 10 → md. 13 → md. 14 → sm. `'-1.7976931348623157e+308'` → sm                                |
+| S4  | `countDigits`                                                                            | `'12.5'` → 3. `'-0.05'` → 3. `'1e+21'` → 3                                                                                 |
+| S5  | `keyToAction`                                                                            | `'7'` → digit, `'decimal'` → decimal, `'add'` → operator, `'clear'` → clear. `'equals'`, `'sqrt'` and `'percent'` → `null` |
 
 #### 7.4.2 API client (`client.test.ts`)
 
@@ -2771,46 +2836,46 @@ Setup:
 - Build responses with `new Response(body, { status, headers })`.
 - In `afterEach`, call `vi.unstubAllGlobals()` and `vi.useRealTimers()`.
 
-| # | Scenario | Expected |
-|---|---|---|
-| FC1 | 200 `{"operation":"add","operands":[2,3],"result":5}` | Resolves to `5`. Fetch is called once with `'/api/v1/calculate'`, `method:'POST'`, the headers `Content-Type: application/json` and `Accept: application/json`, the body `JSON.stringify({operation:'add',operands:[2,3]})` and an `AbortSignal` |
-| FC2 | 422 `DIVISION_BY_ZERO` envelope | `ApiError` with code `DIVISION_BY_ZERO`, status 422, the server's message, `instanceof Error` and `name 'ApiError'` |
-| FC3 | 400 `VALIDATION_ERROR` envelope with `details` | code `VALIDATION_ERROR`, status 400 |
-| FC4 | 422 `NEGATIVE_SQRT` / 422 `NON_FINITE_RESULT` | Those codes |
-| FC5 | `fetch` rejects with `TypeError('Failed to fetch')` | `NETWORK_ERROR`, status undefined |
-| FC6 | Fake timers, and a fetch that rejects only when its signal aborts | After `vi.advanceTimersByTime(REQUEST_TIMEOUT_MS)`: `NETWORK_ERROR`, and the signal is `aborted` |
-| FC7 | 502 with `<html>Bad Gateway</html>` (`text/html`) | `UNEXPECTED_RESPONSE`, status 502 |
-| FC8 | 500 with `{"foo":1}` | `UNEXPECTED_RESPONSE`, status 500 |
-| FC9 | 200 with `{"result":"5"}` / `{}` / `{"result":null}` | `UNEXPECTED_RESPONSE`, status 200 |
-| FC10 | 200 with a non-JSON body | `UNEXPECTED_RESPONSE`, status 200 |
-| FC11 | Success under fake timers | `vi.getTimerCount()` is `0` afterwards |
+| #    | Scenario                                                          | Expected                                                                                                                                                                                                                                         |
+| ---- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FC1  | 200 `{"operation":"add","operands":[2,3],"result":5}`             | Resolves to `5`. Fetch is called once with `'/api/v1/calculate'`, `method:'POST'`, the headers `Content-Type: application/json` and `Accept: application/json`, the body `JSON.stringify({operation:'add',operands:[2,3]})` and an `AbortSignal` |
+| FC2  | 422 `DIVISION_BY_ZERO` envelope                                   | `ApiError` with code `DIVISION_BY_ZERO`, status 422, the server's message, `instanceof Error` and `name 'ApiError'`                                                                                                                              |
+| FC3  | 400 `VALIDATION_ERROR` envelope with `details`                    | code `VALIDATION_ERROR`, status 400                                                                                                                                                                                                              |
+| FC4  | 422 `NEGATIVE_SQRT` / 422 `NON_FINITE_RESULT`                     | Those codes                                                                                                                                                                                                                                      |
+| FC5  | `fetch` rejects with `TypeError('Failed to fetch')`               | `NETWORK_ERROR`, status undefined                                                                                                                                                                                                                |
+| FC6  | Fake timers, and a fetch that rejects only when its signal aborts | After `vi.advanceTimersByTime(REQUEST_TIMEOUT_MS)`: `NETWORK_ERROR`, and the signal is `aborted`                                                                                                                                                 |
+| FC7  | 502 with `<html>Bad Gateway</html>` (`text/html`)                 | `UNEXPECTED_RESPONSE`, status 502                                                                                                                                                                                                                |
+| FC8  | 500 with `{"foo":1}`                                              | `UNEXPECTED_RESPONSE`, status 500                                                                                                                                                                                                                |
+| FC9  | 200 with `{"result":"5"}` / `{}` / `{"result":null}`              | `UNEXPECTED_RESPONSE`, status 200                                                                                                                                                                                                                |
+| FC10 | 200 with a non-JSON body                                          | `UNEXPECTED_RESPONSE`, status 200                                                                                                                                                                                                                |
+| FC11 | Success under fake timers                                         | `vi.getTimerCount()` is `0` afterwards                                                                                                                                                                                                           |
 
 #### 7.4.3 Error messages (`errorMessages.test.ts`)
 
-| # | Input | Expected |
-|---|---|---|
-| FE1 | `ApiError('DIVISION_BY_ZERO', …)` | `'Cannot divide by zero'` |
-| FE2 | `NEGATIVE_SQRT` | `'Invalid input'` |
-| FE3 | `NON_FINITE_RESULT` | `'Math error'` |
-| FE4 | `NETWORK_ERROR` | `'Network error'` |
-| FE5 | `VALIDATION_ERROR`, `UNSUPPORTED_OPERATION`, `UNEXPECTED_RESPONSE`, `INTERNAL_ERROR` | `'Error'` for each |
-| FE6 | `new Error('x')`, `'boom'`, `undefined` | `'Error'` for each |
+| #   | Input                                                                                | Expected                  |
+| --- | ------------------------------------------------------------------------------------ | ------------------------- |
+| FE1 | `ApiError('DIVISION_BY_ZERO', …)`                                                    | `'Cannot divide by zero'` |
+| FE2 | `NEGATIVE_SQRT`                                                                      | `'Invalid input'`         |
+| FE3 | `NON_FINITE_RESULT`                                                                  | `'Math error'`            |
+| FE4 | `NETWORK_ERROR`                                                                      | `'Network error'`         |
+| FE5 | `VALIDATION_ERROR`, `UNSUPPORTED_OPERATION`, `UNEXPECTED_RESPONSE`, `INTERNAL_ERROR` | `'Error'` for each        |
+| FE6 | `new Error('x')`, `'boom'`, `undefined`                                              | `'Error'` for each        |
 
 #### 7.4.4 Components (`Key`, `Keypad`, `Display` and `App` tests)
 
-| # | Scenario | Expected |
-|---|---|---|
-| K1 | `Key` for `add`, then a click | `onPress('add')`. The button is named `Add` and has `type="button"` |
-| K2 | `Key` for a digit | No `aria-pressed` attribute |
-| K3 | A disabled `Key`, then a click | `onPress` is not called |
-| K4 | `Keypad` renders | 20 buttons in this order: `Clear, Square root, Percent, Divide, 7, 8, 9, Multiply, 4, 5, 6, Subtract, 1, 2, 3, Add, 0, Decimal point, Power, Equals` |
-| K5 | `Keypad` with `disabled` | 19 buttons are disabled, and `Clear` is enabled |
-| K6 | `Keypad` with `activeOperation='add'` | `Add` has `aria-pressed="true"`, and the other 4 operators have `"false"` |
-| DS1 | `Display` with `value='123'` | The status shows `123`, has `data-size="lg"` and has no `data-error` |
-| DS2 | `Display` with `error='Math error'` | The status shows `Math error` with `data-error="true"` |
-| DS3 | `Display` with `expression='2 +'` | `getByTestId('expression')` has the text `2 +` |
-| DS4 | A 22-character value | `data-size="sm"` |
-| AP1 | `App` renders | A heading named `Calculator` and a region named `Calculator` |
+| #   | Scenario                              | Expected                                                                                                                                             |
+| --- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| K1  | `Key` for `add`, then a click         | `onPress('add')`. The button is named `Add` and has `type="button"`                                                                                  |
+| K2  | `Key` for a digit                     | No `aria-pressed` attribute                                                                                                                          |
+| K3  | A disabled `Key`, then a click        | `onPress` is not called                                                                                                                              |
+| K4  | `Keypad` renders                      | 20 buttons in this order: `Clear, Square root, Percent, Divide, 7, 8, 9, Multiply, 4, 5, 6, Subtract, 1, 2, 3, Add, 0, Decimal point, Power, Equals` |
+| K5  | `Keypad` with `disabled`              | 19 buttons are disabled, and `Clear` is enabled                                                                                                      |
+| K6  | `Keypad` with `activeOperation='add'` | `Add` has `aria-pressed="true"`, and the other 4 operators have `"false"`                                                                            |
+| DS1 | `Display` with `value='123'`          | The status shows `123`, has `data-size="lg"` and has no `data-error`                                                                                 |
+| DS2 | `Display` with `error='Math error'`   | The status shows `Math error` with `data-error="true"`                                                                                               |
+| DS3 | `Display` with `expression='2 +'`     | `getByTestId('expression')` has the text `2 +`                                                                                                       |
+| DS4 | A 22-character value                  | `data-size="sm"`                                                                                                                                     |
+| AP1 | `App` renders                         | A heading named `Calculator` and a region named `Calculator`                                                                                         |
 
 #### 7.4.5 Integration (`Calculator.test.tsx`)
 
@@ -2839,29 +2904,29 @@ Testing approach:
 - Control pending requests with a `deferred<number>()` helper.
 - The empty expression line contains a non-breaking space, so assert it with `expect(screen.getByTestId('expression').textContent).toBe(' ')`. Do not use `toHaveTextContent('')`, which matches any content.
 
-| # | Scenario | Expected |
-|---|---|---|
-| UI1 | Initial render | The display shows `0`, `calculate` has not been called, and `aria-busy="false"` |
-| UI2 | Click `1 2 3` | Display `123`, no call |
-| UI3 | `2 + 3 =`, with the mock resolving `5` | One call, `('add', [2, 3])`. The display shows `5` (use `findByText` or `waitFor`), and the expression's `textContent` is `' '` |
-| UI4 | `2 + 3 ×` (mock `5`), then `4 =` (mock `20`) | The first call is `('add',[2,3])`. Then the display is `5`, the expression is `5 ×` and `Multiply` has `aria-pressed="true"`. The second call is `('multiply',[5,4])`, and the display ends at `20` |
-| UI5 | `2 + × 3 =` | One call, `('multiply',[2,3])` |
-| UI6 | `9 √` | `('sqrt',[9])` |
-| UI7 | `5 0 %` | `('percent',[50])` |
-| UI8 | `2 ^ 1 0 =` | `('power',[2,10])` |
-| UI9 | `2 + 3 =` with a deferred promise | Before it resolves: every key except `Clear` is disabled and `aria-busy="true"`. After it resolves: the keys are enabled and `aria-busy="false"` |
-| UI10 | Click `Clear` while a deferred is pending | Display `0` and the keys are enabled. Resolving the deferred with `99` leaves the display at `0` |
-| UI11 | Click `2 + 3`, make `calculate` return a pending `deferred<number>()`, then `await user.dblClick(Equals)` | `calculate` was called exactly once, with `('add',[2,3])`. After the deferred resolves with 5, the display shows `5` |
-| UI12 | The mock rejects with `new ApiError('DIVISION_BY_ZERO','…',422)` after `5 ÷ 0 =` | The status shows `Cannot divide by zero` with `data-error="true"` |
-| UI13 | The mock rejects with `NEGATIVE_SQRT`, `NON_FINITE_RESULT`, `NETWORK_ERROR` or `VALIDATION_ERROR`, or with a plain `Error` | `Invalid input` / `Math error` / `Network error` / `Error` / `Error` |
-| UI14 | After an error, click `+`, `√` and `=` | No further calls, and the error text stays |
-| UI15 | After an error, click `7` | Display `7`, with no `data-error` |
-| UI16 | After an error, click `Clear` | Display `0` |
-| UI17 | `5 =` | No call, and the display stays `5` |
-| UI18 | `3 − 5 =` (mock `-2`), then `× 3 =` | The display shows `-2`. The next call is `('multiply',[-2,3])` |
-| UI19 | The mock resolves `1.23456789012346e+21` | The display text is `1.23456789012346e+21`, with `data-size="sm"` |
-| UI20 | 16 clicks on `9` | 15 nines |
-| UI21 | Click `. .` then `5` | Display `0.5` |
+| #    | Scenario                                                                                                                   | Expected                                                                                                                                                                                            |
+| ---- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UI1  | Initial render                                                                                                             | The display shows `0`, `calculate` has not been called, and `aria-busy="false"`                                                                                                                     |
+| UI2  | Click `1 2 3`                                                                                                              | Display `123`, no call                                                                                                                                                                              |
+| UI3  | `2 + 3 =`, with the mock resolving `5`                                                                                     | One call, `('add', [2, 3])`. The display shows `5` (use `findByText` or `waitFor`), and the expression's `textContent` is `' '`                                                                     |
+| UI4  | `2 + 3 ×` (mock `5`), then `4 =` (mock `20`)                                                                               | The first call is `('add',[2,3])`. Then the display is `5`, the expression is `5 ×` and `Multiply` has `aria-pressed="true"`. The second call is `('multiply',[5,4])`, and the display ends at `20` |
+| UI5  | `2 + × 3 =`                                                                                                                | One call, `('multiply',[2,3])`                                                                                                                                                                      |
+| UI6  | `9 √`                                                                                                                      | `('sqrt',[9])`                                                                                                                                                                                      |
+| UI7  | `5 0 %`                                                                                                                    | `('percent',[50])`                                                                                                                                                                                  |
+| UI8  | `2 ^ 1 0 =`                                                                                                                | `('power',[2,10])`                                                                                                                                                                                  |
+| UI9  | `2 + 3 =` with a deferred promise                                                                                          | Before it resolves: every key except `Clear` is disabled and `aria-busy="true"`. After it resolves: the keys are enabled and `aria-busy="false"`                                                    |
+| UI10 | Click `Clear` while a deferred is pending                                                                                  | Display `0` and the keys are enabled. Resolving the deferred with `99` leaves the display at `0`                                                                                                    |
+| UI11 | Click `2 + 3`, make `calculate` return a pending `deferred<number>()`, then `await user.dblClick(Equals)`                  | `calculate` was called exactly once, with `('add',[2,3])`. After the deferred resolves with 5, the display shows `5`                                                                                |
+| UI12 | The mock rejects with `new ApiError('DIVISION_BY_ZERO','…',422)` after `5 ÷ 0 =`                                           | The status shows `Cannot divide by zero` with `data-error="true"`                                                                                                                                   |
+| UI13 | The mock rejects with `NEGATIVE_SQRT`, `NON_FINITE_RESULT`, `NETWORK_ERROR` or `VALIDATION_ERROR`, or with a plain `Error` | `Invalid input` / `Math error` / `Network error` / `Error` / `Error`                                                                                                                                |
+| UI14 | After an error, click `+`, `√` and `=`                                                                                     | No further calls, and the error text stays                                                                                                                                                          |
+| UI15 | After an error, click `7`                                                                                                  | Display `7`, with no `data-error`                                                                                                                                                                   |
+| UI16 | After an error, click `Clear`                                                                                              | Display `0`                                                                                                                                                                                         |
+| UI17 | `5 =`                                                                                                                      | No call, and the display stays `5`                                                                                                                                                                  |
+| UI18 | `3 − 5 =` (mock `-2`), then `× 3 =`                                                                                        | The display shows `-2`. The next call is `('multiply',[-2,3])`                                                                                                                                      |
+| UI19 | The mock resolves `1.23456789012346e+21`                                                                                   | The display text is `1.23456789012346e+21`, with `data-size="sm"`                                                                                                                                   |
+| UI20 | 16 clicks on `9`                                                                                                           | 15 nines                                                                                                                                                                                            |
+| UI21 | Click `. .` then `5`                                                                                                       | Display `0.5`                                                                                                                                                                                       |
 
 ---
 
@@ -2900,11 +2965,11 @@ Write the README **last**, from a working system. **Every command output you pas
    - To run them separately: `npm run dev -w backend`, and `npm run dev -w frontend` (which needs the backend for calculations).
    - The environment variables table (no other variables exist):
 
-     | variable | default | meaning |
-     |---|---|---|
-     | `PORT` | `3000` | Port the backend listens on |
-     | `NODE_ENV` | `development` | `development`, `production` or `test`; controls the morgan log format |
-     | `STATIC_DIR` | unset | Path to the built frontend. When it is set, Express also serves the SPA |
+     | variable     | default       | meaning                                                                 |
+     | ------------ | ------------- | ----------------------------------------------------------------------- |
+     | `PORT`       | `3000`        | Port the backend listens on                                             |
+     | `NODE_ENV`   | `development` | `development`, `production` or `test`; controls the morgan log format   |
+     | `STATIC_DIR` | unset         | Path to the built frontend. When it is set, Express also serves the SPA |
 7. **Production build without Docker.**
    - `npm run build`
    - `NODE_ENV=production STATIC_DIR="$PWD/frontend/dist" node backend/dist/server.js`, then open `http://localhost:3000`.
@@ -3022,7 +3087,7 @@ The brief requires an honest record of the AI prompts that were used.
 
 Template:
 
-~~~markdown
+```markdown
 # AI Prompts Used
 
 This project was built with AI assistance. This file records the prompts used, what each was for,
@@ -3070,9 +3135,9 @@ and how the output was reviewed, as requested by the assignment.
 
 ### 3. Follow-up prompts
 
-| # | Prompt (verbatim) | Why | Result |
-|---|---|---|---|
-| 1 | Rafael Teodosio | | |
+| #   | Prompt (verbatim) | Why | Result |
+| --- | ----------------- | --- | ------ |
+| 1   | Rafael Teodosio   |     |        |
 
 ## What was checked by a human
 
@@ -3081,7 +3146,7 @@ and how the output was reviewed, as requested by the assignment.
 ## Notes and corrections
 
 - Rafael Teodosio: anything the AI got wrong and how it was fixed.
-~~~
+```
 
 Fill in entry 2's **Outcome** with facts:
 
@@ -3298,6 +3363,7 @@ From this milestone on, every frontend commit must pass `npm run test -w fronten
   - `9 9 9 9 9 9 9 9 ^ 9 =` fits the display.
 
   If no browser is available, mark this "not verified: no browser".
+
 - [ ] **(stretch)** At 768×1024 and in landscape at 667×375, the same checks pass, Tab shows a focus ring, and Enter or Space activates the focused key.
 - [ ] Stop the dev servers and confirm the ports are free before M8:
   ```bash
@@ -3446,20 +3512,20 @@ Do these only if time remains after M12.
 
 ### 11.1 Risks and mitigations
 
-| Risk | Mitigation |
-|---|---|
-| Peer-dependency conflicts (Vitest 3 vs Vite 7, React 19 vs RTL) | Keep the specified majors. Fall back to `vite@^6` and `@vitejs/plugin-react@^4`. Install `@testing-library/dom` explicitly. Report any change. |
-| `vitest` and `@vitest/coverage-v8` version mismatch | Install both at the same version in each package. |
-| Mock state leaking between tests (Vitest 3 `restoreMocks` no longer clears `vi.fn()`) | `mockReset: true` in both configs, plus the explicit `beforeEach` reset in `Calculator.test.tsx`. |
-| zod message text changes between versions | Tests assert only `code`, status and `details[].path`. |
-| Express 5 routing differences (wildcards, HEAD, OPTIONS) | Use a plain `app.use` SPA fallback and `.all(methodNotAllowed)` on each route. Tests A20, A22 and A26–A29 cover these. |
-| `npm ci --omit=dev --workspace=backend` fails in Docker | Use the documented fallback `npm ci --omit=dev` and report it. |
-| A backend dependency nested under `backend/node_modules` is missing at runtime | The `api` stage copies both `node_modules` directories, and M8 runs the `deps ok` check. |
-| Docker, a browser or GitHub is unavailable in your environment | Write all files anyway, validate them statically (`docker compose config`, a YAML parse), and report the affected checks as "not verified: <reason>". Never fake output. |
-| A leftover dev server blocks ports for Docker | Use the background-process pattern from §0d.3, and check the ports at the end of M7 and the start of M8 and M9. |
-| nginx caches the backend's DNS at start-up | `depends_on: service_healthy`, with the limitation documented. |
-| CRLF line endings break the contract byte check | `.gitattributes` with `eol=lf`. |
-| Precision loss for integers above 15 significant digits | An accepted trade-off, documented and tested (D8, A17). |
+| Risk                                                                                  | Mitigation                                                                                                                                                               |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Peer-dependency conflicts (Vitest 3 vs Vite 7, React 19 vs RTL)                       | Keep the specified majors. Fall back to `vite@^6` and `@vitejs/plugin-react@^4`. Install `@testing-library/dom` explicitly. Report any change.                           |
+| `vitest` and `@vitest/coverage-v8` version mismatch                                   | Install both at the same version in each package.                                                                                                                        |
+| Mock state leaking between tests (Vitest 3 `restoreMocks` no longer clears `vi.fn()`) | `mockReset: true` in both configs, plus the explicit `beforeEach` reset in `Calculator.test.tsx`.                                                                        |
+| zod message text changes between versions                                             | Tests assert only `code`, status and `details[].path`.                                                                                                                   |
+| Express 5 routing differences (wildcards, HEAD, OPTIONS)                              | Use a plain `app.use` SPA fallback and `.all(methodNotAllowed)` on each route. Tests A20, A22 and A26–A29 cover these.                                                   |
+| `npm ci --omit=dev --workspace=backend` fails in Docker                               | Use the documented fallback `npm ci --omit=dev` and report it.                                                                                                           |
+| A backend dependency nested under `backend/node_modules` is missing at runtime        | The `api` stage copies both `node_modules` directories, and M8 runs the `deps ok` check.                                                                                 |
+| Docker, a browser or GitHub is unavailable in your environment                        | Write all files anyway, validate them statically (`docker compose config`, a YAML parse), and report the affected checks as "not verified: <reason>". Never fake output. |
+| A leftover dev server blocks ports for Docker                                         | Use the background-process pattern from §0d.3, and check the ports at the end of M7 and the start of M8 and M9.                                                          |
+| nginx caches the backend's DNS at start-up                                            | `depends_on: service_healthy`, with the limitation documented.                                                                                                           |
+| CRLF line endings break the contract byte check                                       | `.gitattributes` with `eol=lf`.                                                                                                                                          |
+| Precision loss for integers above 15 significant digits                               | An accepted trade-off, documented and tested (D8, A17).                                                                                                                  |
 
 ### 11.2 Assumptions already decided
 
@@ -3532,6 +3598,4 @@ When you finish, reply with a report that has **exactly** these sections, in thi
     - The README screenshot, if you skipped it.
     - Every check marked "not verified".
 
-*End of implementation prompt.*
-
-
+_End of implementation prompt._

@@ -39,7 +39,7 @@ Definition of Done, in the original order:
 | 9. Responsive layout                        | Not verified: no browser surface available.                                                                                                              |
 | 10. README commands and outputs             | Pass for local executable workflows and recorded API outputs; Bash syntax adapted to Windows. Remote clone/publish instructions are pending publication. |
 | 11. README required coverage                | Pass.                                                                                                                                                    |
-| 12. PROMPTS content and honest outcome      | Pass; entire supplied implementation prompt preserved. Human-only context remains Rafael Teodosio.                                                          |
+| 12. PROMPTS content and honest outcome      | Pass; entire supplied implementation prompt preserved. Human-only context remains Rafael Teodosio.                                                       |
 | 13. No excluded features                    | Pass.                                                                                                                                                    |
 | 14. No generated outputs or secrets in Git  | Pass; no node_modules, dist, coverage directories or environment files are tracked.                                                                      |
 | 15. Conventional Commits/main/clean status  | Pass; clean main with Conventional Commits.                                                                                                              |
