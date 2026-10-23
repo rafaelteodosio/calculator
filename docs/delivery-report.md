@@ -7,31 +7,31 @@ No remote was created and nothing was pushed, following PLAN.md §0d.11.
 
 ## 2. Milestones
 
-| Milestone | Result                                                                                                                                                  |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M0        | Pass — Node 24.22.1, npm 11.19.1, isolated Git repository and workspace scaffolding.                                                                    |
-| M1        | Pass — identical types-only contracts and positive/negative byte-check proofs.                                                                          |
-| M2        | Pass — pure domain, validation, config and error tests; strict typecheck/lint.                                                                          |
-| M3        | Pass — all backend rows, coverage gate, build, HTTP/static/startup/watch smoke checks. POSIX signals verified in Docker.                                |
-| M4        | Pass — Vite HTTP 200, client tests FC1–FC11 and FE1–FE6.                                                                                                |
-| M5        | Pass — R1–R45, S1–S5 and asynchronous hook; logic modules do not import React/client.                                                                   |
-| M6        | Pass — components and UI1–UI21, coverage, lint, typecheck, build and external-script-only HTML.                                                         |
-| M7        | Pass for dev proxy, outage response, coverage/lint/typecheck and cleanup. Not verified: browser arithmetic and responsive checks; no browser available. |
-| M8        | Pass — both images build; runtime dependencies, health, non-root execution, routing and graceful shutdown verified.                                     |
-| M9        | Pass — healthy Compose services, proxy routing, JSON errors, internal-only backend and teardown.                                                        |
-| M10       | Pass locally — valid YAML, clean install and all CI run commands. Not verified: hosted Actions; no remote publication requested.                        |
-| M11       | Pass — README with real curl output, committed coverage, versions and verbatim prompt record.                                                           |
-| M12       | Pending final clean-clone verification.                                                                                                                 |
-| M13       | Not attempted as a milestone. Image size measured at 259 MB; optional under-250-MB target not met. No Docker CI job, dark-mode override or screenshot.  |
+| Milestone | Result                                                                                                                                                       |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M0        | Pass — Node 24.22.1, npm 11.19.1, isolated Git repository and workspace scaffolding.                                                                         |
+| M1        | Pass — identical types-only contracts and positive/negative byte-check proofs.                                                                               |
+| M2        | Pass — pure domain, validation, config and error tests; strict typecheck/lint.                                                                               |
+| M3        | Pass — all backend rows, coverage gate, build, HTTP/static/startup/watch smoke checks. POSIX signals verified in Docker.                                     |
+| M4        | Pass — Vite HTTP 200, client tests FC1–FC11 and FE1–FE6.                                                                                                     |
+| M5        | Pass — R1–R45, S1–S5 and asynchronous hook; logic modules do not import React/client.                                                                        |
+| M6        | Pass — components and UI1–UI21, coverage, lint, typecheck, build and external-script-only HTML.                                                              |
+| M7        | Pass for dev proxy, outage response, coverage/lint/typecheck and cleanup. Not verified: browser arithmetic and responsive checks; no browser available.      |
+| M8        | Pass — both images build; runtime dependencies, health, non-root execution, routing and graceful shutdown verified.                                          |
+| M9        | Pass — healthy Compose services, proxy routing, JSON errors, internal-only backend and teardown.                                                             |
+| M10       | Pass locally — valid YAML, clean install and all CI run commands. Not verified: hosted Actions; no remote publication requested.                             |
+| M11       | Pass — README with real curl output, committed coverage, versions and verbatim prompt record.                                                                |
+| M12       | Pass — fresh local clone, lockfile install and verify exit 0; both Docker acceptance blocks repeated from the clone. Tracked files and clean status checked. |
+| M13       | Not attempted as a milestone. Image size measured at 259 MB; optional under-250-MB target not met. No Docker CI job, dark-mode override or screenshot.       |
 
 Definition of Done, in the original order:
 
 | §10 item                                    | Result                                                                                                                                                   |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1. M0–M12 complete or explicitly unverified | Pending M12. Browser and hosted CI limitations documented.                                                                                               |
+| 1. M0–M12 complete or explicitly unverified | Pass. Browser and hosted CI limitations explicitly documented.                                                                                           |
 | 2. Every MUST test row                      | Pass.                                                                                                                                                    |
 | 3. Every SHOULD test row                    | Pass; none skipped.                                                                                                                                      |
-| 4. Verify from a clean clone                | Pending M12.                                                                                                                                             |
+| 4. Verify from a clean clone                | Pass; npm ci and npm run verify exited 0 in a fresh clone.                                                                                               |
 | 5. Coverage and gate proofs                 | Pass; both packages exceed 80% on all metrics and exit 1 at a 101% line threshold.                                                                       |
 | 6. Contract positive and negative proofs    | Pass.                                                                                                                                                    |
 | 7. Single image                             | Pass.                                                                                                                                                    |
@@ -41,15 +41,15 @@ Definition of Done, in the original order:
 | 11. README required coverage                | Pass.                                                                                                                                                    |
 | 12. PROMPTS content and honest outcome      | Pass; entire supplied implementation prompt preserved. Human-only context remains TODO(author).                                                          |
 | 13. No excluded features                    | Pass.                                                                                                                                                    |
-| 14. No generated outputs or secrets in Git  | Pending final tracked-file check.                                                                                                                        |
-| 15. Conventional Commits/main/clean status  | Pending final status check; milestone commits use the required format.                                                                                   |
+| 14. No generated outputs or secrets in Git  | Pass; no node_modules, dist, coverage directories or environment files are tracked.                                                                      |
+| 15. Conventional Commits/main/clean status  | Pass; clean main with Conventional Commits.                                                                                                              |
 | 16. CI YAML and local steps                 | Pass locally; hosted run not verified because no push was requested.                                                                                     |
 
 ## 3. Commands run and results
 
 | Check                                   | Exit / key result                                                                                                           |
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `npm run verify`                        | Pass in the working repository; clean-clone result pending.                                                                 |
+| `npm run verify`                        | 0 in both the working repository and fresh clone after npm ci. All checks and builds passed.                                |
 | `npm run check:contract`                | 0; both copies identical.                                                                                                   |
 | Contract with one changed byte          | 1; names both differing files. Original restored; exits 0 again.                                                            |
 | Backend line threshold 101%             | 1; `Coverage for lines (100%) does not meet global threshold (101%)`.                                                       |

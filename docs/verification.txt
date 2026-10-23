@@ -1,0 +1,187 @@
+Clean clone: calculator-verify
+npm ci: exit 0
+npm run verify: exit 0
+
+
+> calculator@1.0.0 verify
+> npm run check:contract && npm run format:check && npm run lint && npm run typecheck && npm run test:coverage && npm run build
+
+
+> calculator@1.0.0 check:contract
+> node scripts/check-contract.mjs
+
+check:contract: OK — backend/src/contract.ts and frontend/src/api/contract.ts are identical.
+
+> calculator@1.0.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> calculator@1.0.0 lint
+> npm run lint --workspaces
+
+
+> backend@1.0.0 lint
+> eslint .
+
+
+> frontend@1.0.0 lint
+> eslint . --max-warnings 0
+
+
+> calculator@1.0.0 typecheck
+> npm run typecheck --workspaces
+
+
+> backend@1.0.0 typecheck
+> tsc -p tsconfig.json
+
+
+> frontend@1.0.0 typecheck
+> tsc -p tsconfig.json && tsc -p tsconfig.node.json
+
+
+> calculator@1.0.0 test:coverage
+> npm run test --workspaces && node scripts/coverage-summary.mjs
+
+
+> backend@1.0.0 test
+> vitest run --coverage
+
+
+ RUN  v3.2.7 C:/Users/Administrador/Documents/sezzle_test/calculator-verify/backend
+      Coverage enabled with v8
+
+ ✓ test/errors.test.ts (4 tests) 4ms
+ ✓ test/config.test.ts (9 tests) 6ms
+ ✓ test/calculator.test.ts (48 tests) 9ms
+ ✓ test/validation.test.ts (10 tests) 10ms
+ ✓ test/middleware.test.ts (6 tests) 9ms
+ ✓ test/api.test.ts (77 tests) 177ms
+
+ Test Files  6 passed (6)
+      Tests  154 passed (154)
+   Start at  18:51:43
+   Duration  723ms (transform 281ms, setup 0ms, collect 864ms, tests 214ms, environment 1ms, prepare 505ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |     100 |    99.04 |     100 |     100 |                   
+ src               |     100 |    98.11 |     100 |     100 |                   
+  app.ts           |     100 |      100 |     100 |     100 |                   
+  calculator.ts    |     100 |    96.15 |     100 |     100 | 67                
+  config.ts        |     100 |      100 |     100 |     100 |                   
+  errors.ts        |     100 |      100 |     100 |     100 |                   
+  validation.ts    |     100 |      100 |     100 |     100 |                   
+ src/controllers   |     100 |      100 |     100 |     100 |                   
+  calculate.ts     |     100 |      100 |     100 |     100 |                   
+  health.ts        |     100 |      100 |     100 |     100 |                   
+  operations.ts    |     100 |      100 |     100 |     100 |                   
+ src/middleware    |     100 |      100 |     100 |     100 |                   
+  errorHandler.ts  |     100 |      100 |     100 |     100 |                   
+  ...NotAllowed.ts |     100 |      100 |     100 |     100 |                   
+  noStore.ts       |     100 |      100 |     100 |     100 |                   
+  notFound.ts      |     100 |      100 |     100 |     100 |                   
+  requestLogger.ts |     100 |      100 |     100 |     100 |                   
+  requireJson.ts   |     100 |      100 |     100 |     100 |                   
+  spa.ts           |     100 |      100 |     100 |     100 |                   
+ src/routes        |     100 |      100 |     100 |     100 |                   
+  api.ts           |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 100% ( 265/265 )
+Branches     : 99.04% ( 104/105 )
+Functions    : 100% ( 31/31 )
+Lines        : 100% ( 265/265 )
+================================================================================
+
+> frontend@1.0.0 test
+> vitest run --coverage
+
+
+ RUN  v3.2.7 C:/Users/Administrador/Documents/sezzle_test/calculator-verify/frontend
+      Coverage enabled with v8
+
+ ✓ src/api/errorMessages.test.ts (6 tests) 2ms
+ ✓ src/api/client.test.ts (11 tests) 18ms
+ ✓ src/calculator/selectors.test.ts (5 tests) 4ms
+ ✓ src/calculator/reducer.test.ts (46 tests) 12ms
+ ✓ src/components/Display/Display.test.tsx (4 tests) 68ms
+ ✓ src/App.test.tsx (1 test) 79ms
+ ✓ src/components/Key/Key.test.tsx (3 tests) 116ms
+ ✓ src/components/Keypad/Keypad.test.tsx (3 tests) 207ms
+ ✓ src/components/Calculator/Calculator.test.tsx (23 tests) 2101ms
+
+ Test Files  9 passed (9)
+      Tests  102 passed (102)
+   Start at  18:51:44
+   Duration  3.20s (transform 369ms, setup 1.57s, collect 843ms, tests 2.61s, environment 4.04s, prepare 949ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   99.43 |    99.31 |     100 |   99.43 |                   
+ src               |     100 |      100 |     100 |     100 |                   
+  App.tsx          |     100 |      100 |     100 |     100 |                   
+ src/api           |     100 |      100 |     100 |     100 |                   
+  client.ts        |     100 |      100 |     100 |     100 |                   
+  errorMessages.ts |     100 |      100 |     100 |     100 |                   
+ src/calculator    |   98.96 |    98.96 |     100 |   98.96 |                   
+  keys.ts          |     100 |      100 |     100 |     100 |                   
+  reducer.ts       |   98.11 |     98.5 |     100 |   98.11 | 76-77             
+  selectors.ts     |     100 |      100 |     100 |     100 |                   
+  useCalculator.ts |     100 |      100 |     100 |     100 |                   
+ ...nts/Calculator |     100 |      100 |     100 |     100 |                   
+  Calculator.tsx   |     100 |      100 |     100 |     100 |                   
+ ...onents/Display |     100 |      100 |     100 |     100 |                   
+  Display.tsx      |     100 |      100 |     100 |     100 |                   
+ ...components/Key |     100 |      100 |     100 |     100 |                   
+  Key.tsx          |     100 |      100 |     100 |     100 |                   
+ ...ponents/Keypad |     100 |      100 |     100 |     100 |                   
+  Keypad.tsx       |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 99.43% ( 350/352 )
+Branches     : 99.31% ( 146/147 )
+Functions    : 100% ( 22/22 )
+Lines        : 99.43% ( 350/352 )
+================================================================================
+| Package | Statements | Branches | Functions | Lines |
+|---|---|---|---|---|
+| backend | 100% | 99.04% | 100% | 100% |
+| frontend | 99.43% | 99.31% | 100% | 99.43% |
+
+> calculator@1.0.0 build
+> npm run build --workspaces
+
+
+> backend@1.0.0 build
+> npm run clean && tsc -p tsconfig.build.json
+
+
+> backend@1.0.0 clean
+> node -e "require('fs').rmSync('dist',{recursive:true,force:true})"
+
+
+> frontend@1.0.0 build
+> npm run typecheck && vite build
+
+
+> frontend@1.0.0 typecheck
+> tsc -p tsconfig.json && tsc -p tsconfig.node.json
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 43 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.44 kB │ gzip:  0.28 kB
+dist/assets/index-CPx6zcas.css    2.71 kB │ gzip:  1.23 kB
+dist/assets/index-D58zv9Pc.js   229.83 kB │ gzip: 71.91 kB
+✓ built in 449ms
