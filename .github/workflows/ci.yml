@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repo-checks:
+    name: Contract & formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Contract copies are byte-identical
+        run: npm run check:contract
+      - name: Prettier
+        run: npm run format:check
+
+  package:
+    name: ${{ matrix.workspace }} (lint, typecheck, test+coverage, build)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint -w ${{ matrix.workspace }}
+      - name: Typecheck
+        run: npm run typecheck -w ${{ matrix.workspace }}
+      - name: Test with coverage (fails below 80%)
+        run: npm run test -w ${{ matrix.workspace }}
+      - name: Build
+        run: npm run build -w ${{ matrix.workspace }}
+      - name: Coverage summary
+        if: always()
+        run: |
+          echo "### Coverage — ${{ matrix.workspace }}" >> "$GITHUB_STEP_SUMMARY"
+          node scripts/coverage-summary.mjs ${{ matrix.workspace }} >> "$GITHUB_STEP_SUMMARY" || true
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.workspace }}
+          path: ${{ matrix.workspace }}/coverage/
+          if-no-files-found: warn
+          retention-days: 14
