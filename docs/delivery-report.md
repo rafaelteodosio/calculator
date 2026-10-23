@@ -39,7 +39,7 @@ Definition of Done, in the original order:
 | 9. Responsive layout                        | Not verified: no browser surface available.                                                                                                              |
 | 10. README commands and outputs             | Pass for local executable workflows and recorded API outputs; Bash syntax adapted to Windows. Remote clone/publish instructions are pending publication. |
 | 11. README required coverage                | Pass.                                                                                                                                                    |
-| 12. PROMPTS content and honest outcome      | Pass; entire supplied implementation prompt preserved. Human-only context remains TODO(author).                                                          |
+| 12. PROMPTS content and honest outcome      | Pass; entire supplied implementation prompt preserved. Human-only context remains Rafael Teodosio.                                                          |
 | 13. No excluded features                    | Pass.                                                                                                                                                    |
 | 14. No generated outputs or secrets in Git  | Pass; no node_modules, dist, coverage directories or environment files are tracked.                                                                      |
 | 15. Conventional Commits/main/clean status  | Pass; clean main with Conventional Commits.                                                                                                              |
@@ -163,7 +163,7 @@ come directly from the plan: unary percent, no repeat-equals, 15 digits, negativ
 
 ## 11. Open items for the human
 
-- Fill the three external `TODO(author)` entries in PROMPTS.md: prior planning tools, planning prompts and human review. TODO text inside the embedded source prompt is preserved verbatim and is not an unfilled implementation task.
+- Fill the three external `Rafael Teodosio` entries in PROMPTS.md: prior planning tools, planning prompts and human review. TODO text inside the embedded source prompt is preserved verbatim and is not an unfilled implementation task.
 - Run the M7 browser sequences, responsive checks at 320×568 and 375×667, and optional tablet/landscape/focus checks. A README screenshot is optional and was skipped.
 - After explicitly choosing to publish, from the calculator directory run `gh repo create calculator --public --source . --remote origin --push`, or `git remote add origin <url>` followed by `git push -u origin main`.
 - Replace the README badge comment with the actual CI badge, inspect the hosted workflow and share the repository URL with reviewers.

@@ -6,7 +6,7 @@ This project was built with AI assistance. This file records the supplied prompt
 
 - OpenAI Codex — implementation, shell/file editing, test execution and deployment checks.
 - npm, Git, TypeScript, Vitest, Docker Desktop and curl — local tooling used by Codex.
-- TODO(author): identify any tools used during planning before this session.
+- Rafael Teodosio: identify any tools used during planning before this session.
 
 ## Workflow summary
 
@@ -20,7 +20,7 @@ Browser discovery returned no browsers, and opening the in-app browser returned 
 
 ### 1. Planning conversation
 
-TODO(author): paste the planning conversation verbatim. It was not available to this implementation session.
+Rafael Teodosio: paste the planning conversation verbatim. It was not available to this implementation session.
 
 ### 2. Implementation prompt
 
@@ -169,7 +169,7 @@ The stakeholder has confirmed these decisions and they are **final**. Do not reo
      - no Docker daemon;
      - no browser for the manual UI checks;
      - no GitHub authentication.
-10. **PROMPTS.md.** Create `PROMPTS.md` and keep it current, following §8.2. It must contain this entire prompt verbatim, and §8.2 explains how to insert it reliably. Use `TODO(author)` placeholders only for content you cannot know, such as the human's planning conversation.
+10. **PROMPTS.md.** Create `PROMPTS.md` and keep it current, following §8.2. It must contain this entire prompt verbatim, and §8.2 explains how to insert it reliably. Use `Rafael Teodosio` placeholders only for content you cannot know, such as the human's planning conversation.
 11. **Publishing.** Do **not** create a remote repository or push unless the person running you explicitly asks you to (see §9, M12).
 
 ---
@@ -3029,7 +3029,7 @@ and publication not requested. Clean-clone verification is recorded in docs/deli
 
 ## What was checked by a human
 
-TODO(author): describe your own code review, UI testing and deployment checks. No human review is claimed here.
+Rafael Teodosio: describe your own code review, UI testing and deployment checks. No human review is claimed here.
 
 ## Notes and corrections
 
