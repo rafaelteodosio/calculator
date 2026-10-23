@@ -1,0 +1,14 @@
+**/node_modules
+**/dist
+**/coverage
+**/*.tsbuildinfo
+**/*.log
+**/.env
+**/.env.*
+.git
+.github
+.vscode
+.idea
+.DS_Store
+**/*.md
+docker-compose.yml
