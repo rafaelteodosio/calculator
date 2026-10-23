@@ -1,0 +1,21 @@
+calculator@1.0.0 C:\Users\Administrador\Documents\sezzle_test\calculator
+├─┬ backend@1.0.0 -> .\backend
+│ ├── @vitest/coverage-v8@3.2.7
+│ ├── express@5.3.0
+│ ├── helmet@8.3.0
+│ ├── typescript@5.9.3
+│ ├── vitest@3.2.7
+│ └── zod@4.6.7
+└─┬ frontend@1.0.0 -> .\frontend
+  ├── @testing-library/react@16.3.3
+  ├── @vitejs/plugin-react@5.2.0
+  ├── @vitest/coverage-v8@3.2.7 deduped
+  ├── react@19.3.1
+  ├── typescript@5.9.3 deduped
+  ├── vite@7.3.7
+  └── vitest@3.2.7 deduped
+
+
+Node v24.22.1
+npm 11.19.1
+Docker Engine 29.9.2

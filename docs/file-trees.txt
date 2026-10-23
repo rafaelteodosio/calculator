@@ -1,0 +1,84 @@
+backend/
+├── src/
+│   ├── controllers/
+│   │   ├── calculate.ts
+│   │   ├── health.ts
+│   │   └── operations.ts
+│   ├── middleware/
+│   │   ├── errorHandler.ts
+│   │   ├── methodNotAllowed.ts
+│   │   ├── noStore.ts
+│   │   ├── notFound.ts
+│   │   ├── requestLogger.ts
+│   │   ├── requireJson.ts
+│   │   └── spa.ts
+│   ├── routes/
+│   │   └── api.ts
+│   ├── app.ts
+│   ├── calculator.ts
+│   ├── config.ts
+│   ├── contract.ts
+│   ├── errors.ts
+│   ├── server.ts
+│   └── validation.ts
+├── test/
+│   ├── api.test.ts
+│   ├── calculator.test.ts
+│   ├── config.test.ts
+│   ├── errors.test.ts
+│   ├── middleware.test.ts
+│   └── validation.test.ts
+├── eslint.config.js
+├── package.json
+├── tsconfig.build.json
+├── tsconfig.json
+└── vitest.config.ts
+
+frontend/
+├── src/
+│   ├── api/
+│   │   ├── client.test.ts
+│   │   ├── client.ts
+│   │   ├── contract.ts
+│   │   ├── errorMessages.test.ts
+│   │   └── errorMessages.ts
+│   ├── calculator/
+│   │   ├── keys.ts
+│   │   ├── reducer.test.ts
+│   │   ├── reducer.ts
+│   │   ├── selectors.test.ts
+│   │   ├── selectors.ts
+│   │   ├── types.ts
+│   │   └── useCalculator.ts
+│   ├── components/
+│   │   ├── Calculator/
+│   │   │   ├── Calculator.module.css
+│   │   │   ├── Calculator.test.tsx
+│   │   │   └── Calculator.tsx
+│   │   ├── Display/
+│   │   │   ├── Display.module.css
+│   │   │   ├── Display.test.tsx
+│   │   │   └── Display.tsx
+│   │   ├── Key/
+│   │   │   ├── Key.module.css
+│   │   │   ├── Key.test.tsx
+│   │   │   └── Key.tsx
+│   │   └── Keypad/
+│   │       ├── Keypad.module.css
+│   │       ├── Keypad.test.tsx
+│   │       └── Keypad.tsx
+│   ├── test/
+│   │   └── setup.ts
+│   ├── App.test.tsx
+│   ├── App.tsx
+│   ├── index.css
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── Dockerfile
+├── eslint.config.js
+├── index.html
+├── nginx.conf
+├── package.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts

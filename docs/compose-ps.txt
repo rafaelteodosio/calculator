@@ -1,0 +1,3 @@
+NAME                    IMAGE                 COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+calculator-backend-1    calculator-backend    "docker-entrypoint.s…"   backend    11 seconds ago   Up 10 seconds (healthy)   3000/tcp
+calculator-frontend-1   calculator-frontend   "/docker-entrypoint.…"   frontend   11 seconds ago   Up 5 seconds (healthy)    0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
